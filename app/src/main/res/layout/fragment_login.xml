@@ -55,9 +55,7 @@
 
     <Button
         android:id="@+id/btnLogin"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        style="@style/MyButton"
         android:text="@string/login"
         app:layout_constraintBottom_toTopOf="@+id/btnRegister"
         app:layout_constraintEnd_toEndOf="@id/guideline_end"
@@ -66,9 +64,7 @@
 
     <Button
         android:id="@+id/btnRegister"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        style="@style/MyButton"
         android:text="@string/register"
         app:layout_constraintBottom_toTopOf="@+id/btnForgot"
         app:layout_constraintEnd_toEndOf="@id/guideline_end"

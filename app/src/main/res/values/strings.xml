@@ -7,6 +7,14 @@
     <string name="forgot_password">Forgot Password</string>
     <string name="display_name">Display Name</string>
     <string name="email">Email</string>
-    <string name="confirm_password">Confirm Passwrod</string>
+    <string name="confirm_password">Confirm Password</string>
     <string name="go_back">Go Back</string>
+    <string name="request_new_password">
+        Request<br />
+        New<br />
+        Password</string>
+    <string name="btn_submit_request">Submit Request</string>
+    <string name="change_password">Change<br />Password</string>
+    <string name="return_to_login">Return to login</string>
+    <string name="submit">Submit</string>
 </resources>
