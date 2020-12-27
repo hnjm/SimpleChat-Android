@@ -1,11 +1,11 @@
-package com.kagan.chatapp.ui
+package com.kagan.chatapp.ui.fragments
 
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import com.kagan.chatapp.R
 
-class PasswordRequestFragment : Fragment(R.layout.fragment_password_request) {
+class PasswordChangeFragment : Fragment(R.layout.fragment_password_change) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
