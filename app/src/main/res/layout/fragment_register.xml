@@ -7,9 +7,9 @@
     tools:context=".ui.LoginFragment">
 
     <TextView
-        android:id="@+id/tvLogin"
+        android:id="@+id/tvRegister"
         style="@style/Header"
-        android:text="@string/login"
+        android:text="@string/register"
         app:layout_constraintBottom_toTopOf="@+id/evUserName"
         app:layout_constraintEnd_toEndOf="@id/guideline_end"
         app:layout_constraintStart_toStartOf="@id/guideline_start"
@@ -22,15 +22,51 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:hint="@string/user_name"
-        app:layout_constraintBottom_toTopOf="@+id/evPassword"
+        app:layout_constraintBottom_toTopOf="@+id/evDisplayName"
         app:layout_constraintEnd_toEndOf="@id/guideline_end"
         app:layout_constraintStart_toStartOf="@+id/guideline_start"
-        app:layout_constraintTop_toBottomOf="@+id/tvLogin">
+        app:layout_constraintTop_toBottomOf="@+id/tvRegister">
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="text" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/evDisplayName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:hint="@string/display_name"
+        app:layout_constraintBottom_toTopOf="@+id/evEmail"
+        app:layout_constraintEnd_toEndOf="@id/guideline_end"
+        app:layout_constraintStart_toStartOf="@+id/guideline_start"
+        app:layout_constraintTop_toBottomOf="@+id/evUserName">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/evEmail"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:hint="@string/email"
+        app:layout_constraintBottom_toTopOf="@+id/evPassword"
+        app:layout_constraintEnd_toEndOf="@id/guideline_end"
+        app:layout_constraintStart_toStartOf="@+id/guideline_start"
+        app:layout_constraintTop_toBottomOf="@+id/evDisplayName">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textEmailAddress" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -41,10 +77,10 @@
         android:layout_marginTop="8dp"
         android:hint="@string/password"
         app:endIconMode="password_toggle"
-        app:layout_constraintBottom_toTopOf="@+id/btnLogin"
+        app:layout_constraintBottom_toTopOf="@+id/evConfirmPassword"
         app:layout_constraintEnd_toEndOf="@id/guideline_end"
         app:layout_constraintStart_toStartOf="@id/guideline_start"
-        app:layout_constraintTop_toBottomOf="@id/evUserName">
+        app:layout_constraintTop_toBottomOf="@id/evEmail">
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
@@ -53,16 +89,24 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <Button
-        android:id="@+id/btnLogin"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/evConfirmPassword"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="@string/login"
+        android:hint="@string/confirm_password"
+        app:endIconMode="password_toggle"
         app:layout_constraintBottom_toTopOf="@+id/btnRegister"
         app:layout_constraintEnd_toEndOf="@id/guideline_end"
         app:layout_constraintStart_toStartOf="@id/guideline_start"
-        app:layout_constraintTop_toBottomOf="@+id/evPassword" />
+        app:layout_constraintTop_toBottomOf="@id/evPassword">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword" />
+
+    </com.google.android.material.textfield.TextInputLayout>
 
     <Button
         android:id="@+id/btnRegister"
@@ -73,7 +117,7 @@
         app:layout_constraintBottom_toTopOf="@+id/btnForgot"
         app:layout_constraintEnd_toEndOf="@id/guideline_end"
         app:layout_constraintStart_toStartOf="@id/guideline_start"
-        app:layout_constraintTop_toBottomOf="@+id/btnLogin" />
+        app:layout_constraintTop_toBottomOf="@+id/evConfirmPassword" />
 
     <Button
         android:id="@+id/btnForgot"
@@ -81,7 +125,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="@string/forgot_password"
+        android:text="@string/go_back"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@id/guideline_end"
         app:layout_constraintStart_toStartOf="@id/guideline_start"
