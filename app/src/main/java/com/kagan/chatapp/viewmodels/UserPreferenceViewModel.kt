@@ -1,11 +1,11 @@
-package com.kagan.chatapp.ui.viewmodels
+package com.kagan.chatapp.viewmodels
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import com.kagan.chatapp.ui.datastore.UserPreference
-import com.kagan.chatapp.ui.models.User
+import com.kagan.chatapp.datastore.UserPreference
+import com.kagan.chatapp.models.User
 import kotlinx.coroutines.launch
 
 class UserPreferenceViewModel(application: Application) : AndroidViewModel(application) {

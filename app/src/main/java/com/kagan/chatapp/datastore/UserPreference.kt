@@ -1,4 +1,4 @@
-package com.kagan.chatapp.ui.datastore
+package com.kagan.chatapp.datastore
 
 import android.content.Context
 import androidx.datastore.core.DataStore
@@ -6,7 +6,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.preferencesKey
 import androidx.datastore.preferences.createDataStore
-import com.kagan.chatapp.ui.models.User
+import com.kagan.chatapp.models.User
 import kotlinx.coroutines.flow.map
 
 class UserPreference(context: Context) {
