@@ -4,6 +4,7 @@ import android.util.Log
 import com.kagan.chatapp.models.LoggedInUser
 import com.kagan.chatapp.models.Result
 import com.kagan.chatapp.models.User
+import kotlinx.coroutines.delay
 import java.io.IOError
 import java.io.IOException
 import java.lang.NullPointerException
@@ -20,11 +21,12 @@ class LoginDAO {
         User(5, "admin", "admin")
     )
 
-    fun login(username: String, password: String): Result<LoggedInUser> {
+    suspend fun login(username: String, password: String): Result<LoggedInUser> {
         var result: Result<LoggedInUser>? = null
 
         try {
-
+            // todo delete after delay function
+            delay(2000)
             users.forEach {
                 if (it.username == username && it.password == password) {
                     Log.d(TAG, "login: Logged in $username, $password")

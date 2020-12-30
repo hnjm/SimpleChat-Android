@@ -10,8 +10,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.kagan.chatapp.R
 import com.kagan.chatapp.dao.LoginDAO
 import com.kagan.chatapp.databinding.FragmentLoginBinding
-import com.kagan.chatapp.models.User
 import com.kagan.chatapp.repositories.LoginRepository
+import com.kagan.chatapp.utils.Utils.hideKeyboard
 import com.kagan.chatapp.viewmodels.LoginViewModel
 import com.kagan.chatapp.viewmodels.UserPreferenceViewModel
 import com.kagan.chatapp.viewmodels.viewmodelfactory.LoginViewModelFactory
@@ -50,6 +50,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     private fun init() {
         binding.btnLogin.setOnClickListener {
             login()
+            hideKeyboard(requireContext(), requireView())
         }
 
         binding.btnRegister.setOnClickListener {
@@ -70,8 +71,10 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
             if (!loginResult) {
                 Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show()
+                setVisibilityProgress(false)
             }
             if (loginResult) {
+                setVisibilityProgress(false)
                 Toast.makeText(context, "Navigate to Main Page", Toast.LENGTH_SHORT).show()
             }
         })
@@ -87,17 +90,23 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
     private fun login() {
         if (usernameIsNotEmpty() && passwordIsNotEmpty()) {
-            Log.d(TAG, "login: not empty")
             clearErrorMessage()
+            setVisibilityProgress(true)
             val username = binding.evUserName.editText?.text!!.toString()
             val password = binding.evPassword.editText?.text!!.toString()
 
-            val user = User(0, username, password)
-
+            userPreferenceViewModel.saveUser(username)
             loginViewModel.login(username, password)
-            Toast.makeText(context, "login $user", Toast.LENGTH_SHORT).show()
         } else {
             setErrorMessage()
+        }
+    }
+
+    private fun setVisibilityProgress(value: Boolean) {
+        if (value) {
+            binding.progress.visibility = View.VISIBLE
+        } else {
+            binding.progress.visibility = View.INVISIBLE
         }
     }
 
