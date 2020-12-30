@@ -68,20 +68,24 @@ class SplashActivity : AppCompatActivity() {
     }
 
     private fun observe() {
-        userPreferenceViewModel.getUser.observe(this, Observer {
-            val user = it ?: return@Observer
+        userPreferenceViewModel.getUser.observe(this, {
+            val user = it
             CoroutineScope(Main).launch {
                 delay(1000)
 
-                if (user.isNotEmpty()) {
-                    Log.d(TAG, "onCreate: Main activity have not created yet")
-                    Toast.makeText(
-                        applicationContext,
-                        "onCreate: Main activity have not created yet",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                } else {
+                if (user == null) {
                     startActivity()
+                } else {
+                    if (user.isNotEmpty()) {
+                        Log.d(TAG, "onCreate: Main activity have not created yet")
+                        Toast.makeText(
+                            applicationContext,
+                            "onCreate: Main activity have not created yet",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    } else {
+                        startActivity()
+                    }
                 }
             }
         })
