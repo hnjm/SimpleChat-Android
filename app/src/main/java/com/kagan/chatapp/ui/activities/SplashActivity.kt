@@ -6,19 +6,26 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.kagan.chatapp.databinding.ActivitySplashBinding
+import com.kagan.chatapp.viewmodels.UserPreferenceViewModel
 import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers.Main
 
 const val TAG = "SplashActivity"
 
 class SplashActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySplashBinding
+    private lateinit var userPreferenceViewModel: UserPreferenceViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySplashBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        userPreferenceViewModel = ViewModelProvider(this).get(UserPreferenceViewModel::class.java)
 
     }
 
@@ -28,20 +35,7 @@ class SplashActivity : AppCompatActivity() {
         translateUpY()
         scaleUpLogo()
 
-        loginCheck()
-    }
-
-    private fun loginCheck() {
-        CoroutineScope(Dispatchers.IO).launch {
-            val isLogin = isLogin()
-            withContext(Dispatchers.Main) {
-                if (isLogin) {
-                    Log.d(TAG, "onCreate: Main activity have not created yet")
-                } else {
-                    startActivity()
-                }
-            }
-        }
+        observe()
     }
 
     private fun translateDownY() {
@@ -73,9 +67,23 @@ class SplashActivity : AppCompatActivity() {
         finish()
     }
 
-    private suspend fun isLogin(): Boolean {
-        delay(1000)
-        return false
-    }
+    private fun observe() {
+        userPreferenceViewModel.getUser.observe(this, Observer {
+            val user = it ?: return@Observer
+            CoroutineScope(Main).launch {
+                delay(1000)
 
+                if (user.isNotEmpty()) {
+                    Log.d(TAG, "onCreate: Main activity have not created yet")
+                    Toast.makeText(
+                        applicationContext,
+                        "onCreate: Main activity have not created yet",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+                    startActivity()
+                }
+            }
+        })
+    }
 }
