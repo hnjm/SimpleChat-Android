@@ -18,4 +18,5 @@
     <string name="return_to_login">Return to login</string>
     <string name="submit">Submit</string>
     <string name="logo">logo</string>
+    <string name="evErrorMessage">%s can not be empty.</string>
 </resources>
