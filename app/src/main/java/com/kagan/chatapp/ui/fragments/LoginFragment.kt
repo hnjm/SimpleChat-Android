@@ -75,6 +75,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             }
             if (loginResult) {
                 setVisibilityProgress(false)
+                userPreferenceViewModel.saveUser(binding.evUserName.editText?.text.toString())
                 Toast.makeText(context, "Navigate to Main Page", Toast.LENGTH_SHORT).show()
             }
         })
@@ -95,7 +96,6 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             val username = binding.evUserName.editText?.text!!.toString()
             val password = binding.evPassword.editText?.text!!.toString()
 
-            userPreferenceViewModel.saveUser(username)
             loginViewModel.login(username, password)
         } else {
             setErrorMessage()
