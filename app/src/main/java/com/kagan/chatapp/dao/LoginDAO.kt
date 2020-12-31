@@ -14,11 +14,10 @@ const val TAG = "LoginDAO"
 class LoginDAO {
 
     private val users = arrayListOf<User>(
-        User(1, "Kagan41", "1234567"),
-        User(2, "Kagan4141", "password"),
-        User(3, "Sevcan16", "pass@word"),
-        User(4, "Sevcan1616", "1234."),
-        User(5, "admin", "admin")
+        User(1, "Kagan41", "Kagan Kuscu","kuscukagan@gmail.com","1234567"),
+        User(2, "Kagan4141", "kagan", "kusc","123"),
+        User(3, "Sevcan16", "Sevcan","sevcan2119@gmail.com","pass"),
+        User(4, "admin", "admin","admin@admin","admin")
     )
 
     suspend fun login(username: String, password: String): Result<LoggedInUser> {
