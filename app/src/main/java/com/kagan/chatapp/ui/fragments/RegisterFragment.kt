@@ -1,8 +1,11 @@
 package com.kagan.chatapp.ui.fragments
 
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.widget.EditText
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.kagan.chatapp.R
@@ -26,7 +29,8 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentRegisterBinding.bind(view)
         setVariables()
-        init()
+        setOnClickListener()
+        setOnFocusChangeListener()
     }
 
     private fun setVariables() {
@@ -37,8 +41,7 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
         evConfirmPassword = binding.evConfirmPassword.editText!!
     }
 
-    private fun init() {
-        setFocusChangeListener()
+    private fun setOnClickListener() {
 
         binding.btnRegister.setOnClickListener {
             isEmpty()
@@ -90,7 +93,7 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
         }
     }
 
-    private fun setFocusChangeListener() {
+    private fun setOnFocusChangeListener() {
         val evUsername = binding.evUserName
         val evDisplayName = binding.evDisplayName
         val evEmail = binding.evEmail
