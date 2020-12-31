@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.kagan.chatapp.R
 import com.kagan.chatapp.dao.LoginDAO
 import com.kagan.chatapp.databinding.FragmentLoginBinding
@@ -82,11 +83,15 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     }
 
     private fun forgotPassword() {
-        Toast.makeText(context, "Empty", Toast.LENGTH_SHORT).show()
+        navigate(R.id.action_loginFragment_to_passwordRequestFragment)
     }
 
     private fun register() {
-        Toast.makeText(context, "empty", Toast.LENGTH_SHORT).show()
+        navigate(R.id.action_loginFragment_to_registerFragment)
+    }
+
+    private fun navigate(action: Int) {
+        findNavController().navigate(action)
     }
 
     private fun login() {
