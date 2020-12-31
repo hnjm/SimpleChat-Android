@@ -38,6 +38,8 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
     }
 
     private fun init() {
+        setFocusChangeListener()
+
         binding.btnRegister.setOnClickListener {
             isEmpty()
         }
@@ -57,9 +59,10 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
 
     private fun isEmpty() {
         if (evUsername.text?.isEmpty() == true) {
-            binding.evUserName.error = getString(R.string.evErrorMessage, getString(R.string.user_name))
+            binding.evUserName.error =
+                getString(R.string.evErrorMessage, getString(R.string.user_name))
         } else {
-            binding.evUserName.error = getString(R.string.evErrorMessage, getString(R.string.user_name))
+            binding.evUserName.error = null
         }
 
         if (evDisplayName.text?.isEmpty() == true) {
@@ -84,6 +87,44 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
             binding.evConfirmPassword.error = "evDisplayName"
         } else {
             binding.evConfirmPassword.error = null
+        }
+    }
+
+    private fun setFocusChangeListener() {
+        val evUsername = binding.evUserName
+        val evDisplayName = binding.evDisplayName
+        val evEmail = binding.evEmail
+        val evPassword = binding.evPassword
+        val evConfirmPassword = binding.evConfirmPassword
+
+        evUsername.editText?.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                evUsername.error = null
+            }
+        }
+
+        evDisplayName.editText?.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                evDisplayName.error = null
+            }
+        }
+
+        evEmail.editText?.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                evEmail.error = null
+            }
+        }
+
+        evPassword.editText?.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                evPassword.error = null
+            }
+        }
+
+        evConfirmPassword.editText?.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                evConfirmPassword.error = null
+            }
         }
     }
 }

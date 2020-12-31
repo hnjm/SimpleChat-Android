@@ -49,6 +49,8 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     }
 
     private fun init() {
+        setFocusChangeListener()
+
         binding.btnLogin.setOnClickListener {
             login()
             hideKeyboard(requireContext(), requireView())
@@ -142,5 +144,23 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
     private fun passwordIsNotEmpty(): Boolean {
         return binding.evPassword.editText?.text?.isNotEmpty()!!
+    }
+
+    private fun setFocusChangeListener() {
+        val evUsername = binding.evUserName
+        val evPassword = binding.evPassword
+
+        evUsername.editText?.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                evUsername.error = null
+            }
+        }
+
+
+        evPassword.editText?.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
+                evPassword.error = null
+            }
+        }
     }
 }
