@@ -78,11 +78,7 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
     }
 
     private fun navigate() {
-        val action = RegisterFragmentDirections.actionRegisterFragmentToLoginFragment(
-            evUsername.text.toString(),
-            evPassword.text.toString()
-        )
-        findNavController().navigate(action)
+       navigateUp()
     }
 
     private fun isNotEmpty(): Boolean {
