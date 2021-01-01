@@ -11,6 +11,17 @@
         android:layout_height="wrap_content"
         tools:context=".ui.fragments.LoginFragment">
 
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/progress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            android:visibility="invisible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
         <TextView
             android:id="@+id/tvRegister"
             style="@style/Header"
@@ -84,9 +95,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/buttons_margin_top"
             android:hint="@string/password"
+            app:counterEnabled="true"
             app:endIconMode="password_toggle"
             app:errorEnabled="true"
-            app:counterEnabled="true"
             app:layout_constraintBottom_toTopOf="@+id/evConfirmPassword"
             app:layout_constraintEnd_toEndOf="@id/guideline_end"
             app:layout_constraintStart_toStartOf="@id/guideline_start"
@@ -105,9 +116,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/buttons_margin_top"
             android:hint="@string/confirm_password"
+            app:counterEnabled="true"
             app:endIconMode="password_toggle"
             app:errorEnabled="true"
-            app:counterEnabled="true"
             app:layout_constraintBottom_toTopOf="@+id/btnRegister"
             app:layout_constraintEnd_toEndOf="@id/guideline_end"
             app:layout_constraintStart_toStartOf="@id/guideline_start"

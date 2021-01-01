@@ -20,6 +20,8 @@ class LoginViewModel(private val repository: LoginRepository) : ViewModel() {
 
     private val _loginResult = MediatorLiveData<Boolean>()
     val loginResult: LiveData<Boolean> = _loginResult
+    private val _registerResult = MediatorLiveData<Boolean>()
+    val registerResult: LiveData<Boolean> = _registerResult
 
     fun login(username: String, password: String) {
         viewModelScope.launch(IO) {
@@ -37,7 +39,11 @@ class LoginViewModel(private val repository: LoginRepository) : ViewModel() {
     }
 
     fun register(user: User) = viewModelScope.launch(IO) {
-        repository.register(user)
+        val result = repository.register(user)
+
+        withContext(Main) {
+            _registerResult.value = result is Result.Success
+        }
     }
 
 }

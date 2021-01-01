@@ -16,11 +16,21 @@
         <action
             android:id="@+id/action_loginFragment_to_passwordRequestFragment"
             app:destination="@id/passwordRequestFragment" />
+        <argument
+            android:name="username"
+            app:argType="string" />
+        <argument
+            android:name="password"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/registerFragment"
         android:name="com.kagan.chatapp.ui.fragments.RegisterFragment"
-        android:label="RegisterFragment" />
+        android:label="RegisterFragment" >
+        <action
+            android:id="@+id/action_registerFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+    </fragment>
     <fragment
         android:id="@+id/passwordRequestFragment"
         android:name="com.kagan.chatapp.ui.fragments.PasswordRequestFragment"
