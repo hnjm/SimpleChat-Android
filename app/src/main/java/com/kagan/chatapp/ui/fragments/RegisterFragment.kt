@@ -77,7 +77,11 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
         findNavController().navigateUp()
     }
 
-    private fun navigate(action: Int) {
+    private fun navigate() {
+        val action = RegisterFragmentDirections.actionRegisterFragmentToLoginFragment(
+            evUsername.text.toString(),
+            evPassword.text.toString()
+        )
         findNavController().navigate(action)
     }
 
@@ -166,6 +170,7 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
             }
             if (registerResult) {
                 setVisibilityProgress(false)
+                navigate()
             }
         })
     }
