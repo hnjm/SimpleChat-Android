@@ -10,7 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.kagan.chatapp.R
-import com.kagan.chatapp.dao.LoginDAO
+import com.kagan.chatapp.api.LoginApi
 import com.kagan.chatapp.databinding.FragmentRegisterBinding
 import com.kagan.chatapp.models.User
 import com.kagan.chatapp.repositories.LoginRepository
@@ -21,7 +21,7 @@ import com.kagan.chatapp.viewmodels.viewmodelfactory.LoginViewModelFactory
 class RegisterFragment : Fragment(R.layout.fragment_register) {
 
     private lateinit var binding: FragmentRegisterBinding
-    private lateinit var dao: LoginDAO
+    private lateinit var api: LoginApi
     private lateinit var repository: LoginRepository
     private lateinit var factory: LoginViewModelFactory
     private lateinit var loginViewModel: LoginViewModel
@@ -34,8 +34,8 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        dao = LoginDAO()
-        repository = LoginRepository(dao)
+        api = LoginApi()
+        repository = LoginRepository(api)
         factory = LoginViewModelFactory(repository)
         loginViewModel =
             ViewModelProvider(requireActivity(), factory).get(LoginViewModel::class.java)

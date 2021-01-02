@@ -5,12 +5,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kagan.chatapp.datastore.UserPreference
 import com.kagan.chatapp.models.User
 import com.kagan.chatapp.repositories.LoginRepository
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
-import com.kagan.chatapp.models.Result
+import com.kagan.chatapp.utils.Result
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.withContext
 

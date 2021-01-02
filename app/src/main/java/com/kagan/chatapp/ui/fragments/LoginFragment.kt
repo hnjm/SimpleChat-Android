@@ -9,7 +9,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.kagan.chatapp.R
-import com.kagan.chatapp.dao.LoginDAO
+import com.kagan.chatapp.api.LoginApi
 import com.kagan.chatapp.databinding.FragmentLoginBinding
 import com.kagan.chatapp.repositories.LoginRepository
 import com.kagan.chatapp.utils.Utils.hideKeyboard
@@ -23,7 +23,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
     private lateinit var binding: FragmentLoginBinding
     private lateinit var userPreferenceViewModel: UserPreferenceViewModel
-    private lateinit var loginDAO: LoginDAO
+    private lateinit var loginApi: LoginApi
     private lateinit var repository: LoginRepository
     private lateinit var loginViewModel: LoginViewModel
     private lateinit var loginViewModelFactory: LoginViewModelFactory
@@ -32,8 +32,8 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         super.onCreate(savedInstanceState)
         userPreferenceViewModel =
             ViewModelProvider(requireActivity()).get(UserPreferenceViewModel::class.java)
-        loginDAO = LoginDAO()
-        repository = LoginRepository(loginDAO)
+        loginApi = LoginApi()
+        repository = LoginRepository(loginApi)
         loginViewModelFactory = LoginViewModelFactory(repository)
         loginViewModel = ViewModelProvider(
             requireActivity(),
