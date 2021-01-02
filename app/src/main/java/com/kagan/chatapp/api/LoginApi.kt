@@ -1,22 +1,17 @@
-package com.kagan.chatapp.dao
+package com.kagan.chatapp.api
 
 import android.util.Log
 import com.kagan.chatapp.models.LoggedInUser
-import com.kagan.chatapp.models.Result
+import com.kagan.chatapp.utils.Result
 import com.kagan.chatapp.models.User
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.io.IOError
 import java.io.IOException
 import java.lang.NullPointerException
 import kotlin.random.Random
 
 const val TAG = "LoginDAO"
 
-class LoginDAO {
+class LoginApi {
 
     private val users = arrayListOf<User>(
         User(1, "Kagan41", "Kagan Kuscu", "kuscukagan@gmail.com", "1234567"),
