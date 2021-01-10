@@ -1,9 +1,11 @@
 package com.kagan.chatapp.models
 
 data class User(
-    val id: Int = 0,
-    val username: String,
+    val userName: String,
+    val lastLoginDateTime: String,
     val displayName: String,
-    val email: String,
-    val password: String
+    val about: String,
+    val accessToken: String,
+    val refreshToken: String,
+    val id: String
 )

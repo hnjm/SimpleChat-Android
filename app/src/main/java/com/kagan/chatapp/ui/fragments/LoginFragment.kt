@@ -9,13 +9,13 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.kagan.chatapp.R
-import com.kagan.chatapp.api.LoginApi
 import com.kagan.chatapp.databinding.FragmentLoginBinding
 import com.kagan.chatapp.repositories.LoginRepository
 import com.kagan.chatapp.utils.Utils.hideKeyboard
 import com.kagan.chatapp.viewmodels.LoginViewModel
 import com.kagan.chatapp.viewmodels.UserPreferenceViewModel
 import com.kagan.chatapp.viewmodels.viewmodelfactory.LoginViewModelFactory
+import java.util.*
 
 const val TAG = "LoginFragment"
 
@@ -23,7 +23,6 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
     private lateinit var binding: FragmentLoginBinding
     private lateinit var userPreferenceViewModel: UserPreferenceViewModel
-    private lateinit var loginApi: LoginApi
     private lateinit var repository: LoginRepository
     private lateinit var loginViewModel: LoginViewModel
     private lateinit var loginViewModelFactory: LoginViewModelFactory
@@ -32,8 +31,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         super.onCreate(savedInstanceState)
         userPreferenceViewModel =
             ViewModelProvider(requireActivity()).get(UserPreferenceViewModel::class.java)
-        loginApi = LoginApi()
-        repository = LoginRepository(loginApi)
+        repository = LoginRepository()
         loginViewModelFactory = LoginViewModelFactory(repository)
         loginViewModel = ViewModelProvider(
             requireActivity(),
@@ -103,7 +101,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             val username = binding.evUserName.editText?.text!!.toString()
             val password = binding.evPassword.editText?.text!!.toString()
 
-            loginViewModel.login(username, password)
+//            loginViewModel.login(username, password)
         } else {
             setErrorMessage()
         }

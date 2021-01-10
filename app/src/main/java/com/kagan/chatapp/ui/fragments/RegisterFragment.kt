@@ -1,6 +1,7 @@
 package com.kagan.chatapp.ui.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.Toast
@@ -10,9 +11,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.kagan.chatapp.R
-import com.kagan.chatapp.api.LoginApi
+import com.kagan.chatapp.api.AuthenticationApi
 import com.kagan.chatapp.databinding.FragmentRegisterBinding
-import com.kagan.chatapp.models.User
+import com.kagan.chatapp.models.RegisterUser
 import com.kagan.chatapp.repositories.LoginRepository
 import com.kagan.chatapp.utils.Utils.hideKeyboard
 import com.kagan.chatapp.viewmodels.LoginViewModel
@@ -21,7 +22,6 @@ import com.kagan.chatapp.viewmodels.viewmodelfactory.LoginViewModelFactory
 class RegisterFragment : Fragment(R.layout.fragment_register) {
 
     private lateinit var binding: FragmentRegisterBinding
-    private lateinit var api: LoginApi
     private lateinit var repository: LoginRepository
     private lateinit var factory: LoginViewModelFactory
     private lateinit var loginViewModel: LoginViewModel
@@ -34,8 +34,7 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        api = LoginApi()
-        repository = LoginRepository(api)
+        repository = LoginRepository()
         factory = LoginViewModelFactory(repository)
         loginViewModel =
             ViewModelProvider(requireActivity(), factory).get(LoginViewModel::class.java)
@@ -78,7 +77,7 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
     }
 
     private fun navigate() {
-       navigateUp()
+        navigateUp()
     }
 
     private fun isNotEmpty(): Boolean {
@@ -113,9 +112,9 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
             binding.evConfirmPassword.error = null
         }
 
-        return evUsername.text?.isNotEmpty() == true || evDisplayName.text?.isNotEmpty() == true
-                || evEmail.text?.isNotEmpty() == true || evPassword.text?.isNotEmpty() == true
-                || evConfirmPassword.text?.isNotEmpty() == true
+        return evUsername.text?.isNotEmpty() == true && evDisplayName.text?.isNotEmpty() == true
+                && evEmail.text?.isNotEmpty() == true && evPassword.text?.isNotEmpty() == true
+                && evConfirmPassword.text?.isNotEmpty() == true
     }
 
     private fun setOnFocusChangeListener() {
@@ -157,16 +156,18 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
     }
 
     private fun registerResultObserve() {
-        loginViewModel.registerResult.observe(viewLifecycleOwner, Observer {
-            val registerResult = it ?: return@Observer
+        loginViewModel.registerResult.observe(viewLifecycleOwner, Observer { result ->
+            val registerResult = result ?: return@Observer
 
-            if (!registerResult) {
+            if (result.isSuccessful) {
+                Log.d(TAG, "registerResultObserve: ${registerResult.rec}")
+                Log.d(TAG, "registerResultObserve: ${registerResult.recId}")
+                setVisibilityProgress(false)
+//                navigate()
+            } else {
+                Log.d(TAG, "registerResultObserve: ${registerResult.error}")
                 Toast.makeText(context, "Register Not Successful", Toast.LENGTH_SHORT).show()
                 setVisibilityProgress(false)
-            }
-            if (registerResult) {
-                setVisibilityProgress(false)
-                navigate()
             }
         })
     }
@@ -185,15 +186,17 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
         val displayName = evDisplayName.text.toString()
         val email = evEmail.text.toString()
         val password = evPassword.text.toString()
+        val confirmPassword = evConfirmPassword.text.toString()
 
-        val newUser = User(
-            username = username, displayName = displayName,
-            email = email,
-            password = password
+        val newUser = RegisterUser(
+            username = username,
+            password = password,
+            confirmPassword = confirmPassword,
+            displayName = displayName,
+            email = email
         )
 
         loginViewModel.register(newUser)
-
     }
 
     private fun isSamePassword(): Boolean {
