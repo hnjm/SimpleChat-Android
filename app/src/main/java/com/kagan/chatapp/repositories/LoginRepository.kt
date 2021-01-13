@@ -1,7 +1,7 @@
 package com.kagan.chatapp.repositories
 
 import com.kagan.chatapp.api.RetrofitInstance
-import com.kagan.chatapp.models.RegisterUser
+import com.kagan.chatapp.models.RegisterUserVM
 
 class LoginRepository() {
 
@@ -9,5 +9,5 @@ class LoginRepository() {
         RetrofitInstance.API.login(username, password)
 
     suspend fun logout() = RetrofitInstance.API.logout()
-    suspend fun register(registerUser: RegisterUser) = RetrofitInstance.API.register(registerUser)
+    fun register(registerUserVM: RegisterUserVM) = RetrofitInstance.API.register(registerUserVM)
 }

@@ -11,10 +11,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.kagan.chatapp.R
-import com.kagan.chatapp.api.AuthenticationApi
 import com.kagan.chatapp.databinding.FragmentRegisterBinding
-import com.kagan.chatapp.models.RegisterUser
+import com.kagan.chatapp.models.RegisterUserRequestVM
+import com.kagan.chatapp.models.RegisterUserVM
 import com.kagan.chatapp.repositories.LoginRepository
+import com.kagan.chatapp.utils.ErrorCodes.getDescription
 import com.kagan.chatapp.utils.Utils.hideKeyboard
 import com.kagan.chatapp.viewmodels.LoginViewModel
 import com.kagan.chatapp.viewmodels.viewmodelfactory.LoginViewModelFactory
@@ -156,21 +157,45 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
     }
 
     private fun registerResultObserve() {
-        loginViewModel.registerResult.observe(viewLifecycleOwner, Observer { result ->
+        loginViewModel.registerResultWithRecVM.observe(viewLifecycleOwner, Observer { result ->
             val registerResult = result ?: return@Observer
 
             if (result.isSuccessful) {
                 Log.d(TAG, "registerResultObserve: ${registerResult.rec}")
-                Log.d(TAG, "registerResultObserve: ${registerResult.recId}")
                 setVisibilityProgress(false)
 //                navigate()
-            } else {
-                Log.d(TAG, "registerResultObserve: ${registerResult.error}")
-                Toast.makeText(context, "Register Not Successful", Toast.LENGTH_SHORT).show()
-                setVisibilityProgress(false)
+            }
+        })
+
+        loginViewModel.registerErrors.observe(viewLifecycleOwner, Observer { result ->
+            val registerErrors = result ?: return@Observer
+            registerErrors.errors?.forEach {
+                when (it.field) {
+                    "UserName" -> {
+                        val text = getDescription(it.errorCode)
+                        binding.evUserName.error = text
+                    }
+                    "Password" -> {
+                        val text = getDescription(it.errorCode)
+                        binding.evPassword.error = text
+                    }
+                    "ConfirmPassword" -> {
+                        val text = getDescription(it.errorCode)
+                        binding.evConfirmPassword.error = text
+                    }
+                    "DisplayName" -> {
+                        val text = getDescription(it.errorCode)
+                        binding.evDisplayName.error = text
+                    }
+                    "Email" -> {
+                        val text = getDescription(it.errorCode)
+                        binding.evEmail.error = text
+                    }
+                }
             }
         })
     }
+
 
     private fun setVisibilityProgress(value: Boolean) {
         if (value) {
@@ -188,7 +213,7 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
         val password = evPassword.text.toString()
         val confirmPassword = evConfirmPassword.text.toString()
 
-        val newUser = RegisterUser(
+        val newUser = RegisterUserVM(
             username = username,
             password = password,
             confirmPassword = confirmPassword,
@@ -196,7 +221,10 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
             email = email
         )
 
-        loginViewModel.register(newUser)
+        val request = RegisterUserRequestVM()
+        request.requestBody = newUser
+
+        loginViewModel.register(request)
     }
 
     private fun isSamePassword(): Boolean {

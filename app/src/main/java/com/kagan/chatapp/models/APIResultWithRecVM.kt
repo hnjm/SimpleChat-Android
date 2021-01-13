@@ -2,9 +2,9 @@ package com.kagan.chatapp.models
 
 import java.util.*
 
-data class APIResult(
+data class APIResultWithRecVM<T>(
     val recId: UUID? = null,
-    val rec: User? = null,
+    val rec: T? = null,
     val isSuccessful: Boolean,
-    val error: List<ApiError>? = null
+    val errorCodeVM: List<APIResultErrorCodeVM>? = null
 )

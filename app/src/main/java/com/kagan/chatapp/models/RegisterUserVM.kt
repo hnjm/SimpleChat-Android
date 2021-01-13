@@ -1,6 +1,6 @@
 package com.kagan.chatapp.models
 
-data class RegisterUser(
+data class RegisterUserVM(
     val username: String,
     val password: String,
     val confirmPassword: String,
@@ -8,3 +8,8 @@ data class RegisterUser(
     val email: String,
     val about: String? = null,
 )
+
+class RegisterUserRequestVM {
+    lateinit var requestBody: RegisterUserVM
+    var requestCount: Int = 0
+}
