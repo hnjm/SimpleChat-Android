@@ -2,6 +2,8 @@ plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id 'androidx.navigation.safeargs.kotlin'
+    id 'kotlin-kapt'
+    id 'dagger.hilt.android.plugin'
 }
 
 android {
@@ -40,7 +42,7 @@ android {
 
 dependencies {
     def lifecycle_version = "2.2.0"
-    def retrofit_version = "2.6.0"
+    def retrofit_version = "2.9.0"
     def multiDex_version = "2.0.1"
 
 
@@ -73,5 +75,16 @@ dependencies {
     implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
     implementation "com.squareup.okhttp3:logging-interceptor:4.9.0"
 
+    // DI
+    implementation "com.google.dagger:hilt-android:$hilt_version"
+    kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
+
+    implementation 'androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha02'
+    kapt 'androidx.hilt:hilt-compiler:1.0.0-alpha02'
+
     implementation "androidx.multidex:multidex:$multiDex_version"
+}
+
+kapt {
+    correctErrorTypes true
 }

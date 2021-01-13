@@ -1,0 +1,43 @@
+package com.kagan.chatapp.di
+
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.kagan.chatapp.api.AuthenticationApi
+import com.kagan.chatapp.utils.Constants
+import com.kagan.chatapp.utils.UnsafeOkHttpClient
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Singleton
+
+@Module
+@InstallIn(SingletonComponent::class)
+object RetrofitModule {
+
+
+    @Singleton
+    @Provides
+    fun provideGsonBuilder(): Gson {
+        return GsonBuilder().create()
+    }
+
+    @Singleton
+    @Provides
+    fun provideRetrofit(gson: Gson): Retrofit.Builder {
+        return Retrofit.Builder()
+            .baseUrl(Constants.BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .client(UnsafeOkHttpClient.getUnsafeOkHttpClient())
+    }
+
+    @Singleton
+    @Provides
+    fun provideAuthenticationService(retrofit: Retrofit.Builder): AuthenticationApi {
+        return retrofit
+            .build()
+            .create(AuthenticationApi::class.java)
+    }
+}

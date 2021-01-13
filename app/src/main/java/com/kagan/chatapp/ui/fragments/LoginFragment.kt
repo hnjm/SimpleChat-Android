@@ -5,40 +5,25 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.kagan.chatapp.R
 import com.kagan.chatapp.databinding.FragmentLoginBinding
-import com.kagan.chatapp.repositories.LoginRepository
 import com.kagan.chatapp.utils.Utils.hideKeyboard
 import com.kagan.chatapp.viewmodels.LoginViewModel
-import com.kagan.chatapp.viewmodels.UserPreferenceViewModel
-import com.kagan.chatapp.viewmodels.viewmodelfactory.LoginViewModelFactory
+import com.kagan.chatapp.viewmodels.TokenPreferenceViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 
 const val TAG = "LoginFragment"
 
+@AndroidEntryPoint
 class LoginFragment : Fragment(R.layout.fragment_login) {
 
     private lateinit var binding: FragmentLoginBinding
-    private lateinit var userPreferenceViewModel: UserPreferenceViewModel
-    private lateinit var repository: LoginRepository
-    private lateinit var loginViewModel: LoginViewModel
-    private lateinit var loginViewModelFactory: LoginViewModelFactory
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        userPreferenceViewModel =
-            ViewModelProvider(requireActivity()).get(UserPreferenceViewModel::class.java)
-        repository = LoginRepository()
-        loginViewModelFactory = LoginViewModelFactory(repository)
-        loginViewModel = ViewModelProvider(
-            requireActivity(),
-            loginViewModelFactory
-        ).get(LoginViewModel::class.java)
-    }
-
+    private val tokenPreferenceViewModel: TokenPreferenceViewModel by viewModels()
+    private val loginViewModel: LoginViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -76,7 +61,6 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             }
             if (loginResult) {
                 setVisibilityProgress(false)
-                userPreferenceViewModel.saveUser(binding.evUserName.editText?.text.toString())
                 Toast.makeText(context, "Navigate to Main Page", Toast.LENGTH_SHORT).show()
             }
         })

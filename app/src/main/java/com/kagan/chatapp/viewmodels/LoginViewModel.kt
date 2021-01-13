@@ -1,10 +1,12 @@
 package com.kagan.chatapp.viewmodels
 
 import android.util.Log
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonElement
 import com.google.gson.JsonSyntaxException
@@ -23,10 +25,15 @@ import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import javax.inject.Inject
 
 const val TAG = "LoginViewModel"
 
-class LoginViewModel(private val repository: LoginRepository) : ViewModel() {
+class LoginViewModel @ViewModelInject
+constructor(
+    private val repository: LoginRepository,
+    private val gson: Gson
+) : ViewModel() {
 
     private val _loginResult = MutableLiveData<Boolean>()
     val loginResult: LiveData<Boolean> = _loginResult
@@ -72,7 +79,6 @@ class LoginViewModel(private val repository: LoginRepository) : ViewModel() {
                 if (response == null) {
                     Sentry.captureMessage("$call response is null", SentryLevel.ERROR)
                 } else {
-                    val gson = GsonBuilder().create()
                     when (response.code()) {
                         400 -> {
                             try {

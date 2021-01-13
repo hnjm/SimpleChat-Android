@@ -1,13 +1,15 @@
 package com.kagan.chatapp.repositories
 
-import com.kagan.chatapp.api.RetrofitInstance
+import com.kagan.chatapp.api.AuthenticationApi
 import com.kagan.chatapp.models.RegisterUserVM
 
-class LoginRepository() {
+class LoginRepository constructor(
+    private val authenticationApi: AuthenticationApi
+) {
 
     suspend fun login(username: String, password: String) =
-        RetrofitInstance.API.login(username, password)
+        authenticationApi.login(username, password)
 
-    suspend fun logout() = RetrofitInstance.API.logout()
-    fun register(registerUserVM: RegisterUserVM) = RetrofitInstance.API.register(registerUserVM)
+    suspend fun logout() = authenticationApi.logout()
+    fun register(registerUserVM: RegisterUserVM) = authenticationApi.register(registerUserVM)
 }

@@ -7,26 +7,26 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.kagan.chatapp.databinding.ActivitySplashBinding
-import com.kagan.chatapp.viewmodels.UserPreferenceViewModel
+import com.kagan.chatapp.viewmodels.TokenPreferenceViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.Main
 
 const val TAG = "SplashActivity"
 
+@AndroidEntryPoint
 class SplashActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySplashBinding
-    private lateinit var userPreferenceViewModel: UserPreferenceViewModel
+    private val tokenPreferenceViewModel: TokenPreferenceViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySplashBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        userPreferenceViewModel = ViewModelProvider(this).get(UserPreferenceViewModel::class.java)
-
     }
 
     override fun onResume() {
@@ -68,24 +68,14 @@ class SplashActivity : AppCompatActivity() {
     }
 
     private fun observe() {
-        userPreferenceViewModel.getUser.observe(this, {
-            val user = it
+        tokenPreferenceViewModel.accessToken.observe(this, { accessToken ->
             CoroutineScope(Main).launch {
                 delay(1000)
 
-                if (user == null) {
+                if (accessToken == null) {
                     startActivity()
                 } else {
-                    if (user.isNotEmpty()) {
-                        Log.d(TAG, "onCreate: Main activity have not created yet")
-                        Toast.makeText(
-                            applicationContext,
-                            "onCreate: Main activity have not created yet",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    } else {
-                        startActivity()
-                    }
+
                 }
             }
         })

@@ -4,42 +4,31 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.EditText
-import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.kagan.chatapp.R
 import com.kagan.chatapp.databinding.FragmentRegisterBinding
 import com.kagan.chatapp.models.RegisterUserRequestVM
 import com.kagan.chatapp.models.RegisterUserVM
-import com.kagan.chatapp.repositories.LoginRepository
 import com.kagan.chatapp.utils.ErrorCodes.getDescription
 import com.kagan.chatapp.utils.Utils.hideKeyboard
 import com.kagan.chatapp.viewmodels.LoginViewModel
-import com.kagan.chatapp.viewmodels.viewmodelfactory.LoginViewModelFactory
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class RegisterFragment : Fragment(R.layout.fragment_register) {
 
     private lateinit var binding: FragmentRegisterBinding
-    private lateinit var repository: LoginRepository
-    private lateinit var factory: LoginViewModelFactory
-    private lateinit var loginViewModel: LoginViewModel
+    private val loginViewModel: LoginViewModel by viewModels()
 
     private lateinit var evUsername: EditText
     private lateinit var evDisplayName: EditText
     private lateinit var evEmail: EditText
     private lateinit var evPassword: EditText
     private lateinit var evConfirmPassword: EditText
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        repository = LoginRepository()
-        factory = LoginViewModelFactory(repository)
-        loginViewModel =
-            ViewModelProvider(requireActivity(), factory).get(LoginViewModel::class.java)
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
