@@ -34,12 +34,16 @@ constructor(
 
     private val _loginResult = MutableLiveData<Boolean>()
     val loginResult: LiveData<Boolean> = _loginResult
+
     private val _registerResultWithRec = MutableLiveData<APIResultWithRecVM<UserAuthenticationVM>>()
     val registerResultWithRecVM: LiveData<APIResultWithRecVM<UserAuthenticationVM>> =
         _registerResultWithRec
 
     private val _registerErrors = MutableLiveData<APIResultVM>()
     val registerErrors: LiveData<APIResultVM> = _registerErrors
+
+    private val _registerOnFailure = MutableLiveData<Boolean>()
+    val registerOnFailure: LiveData<Boolean> = _registerOnFailure
 
     fun login(username: String, password: String) {
         viewModelScope.launch(IO) {
@@ -61,6 +65,7 @@ constructor(
 
         call.enqueue(object : Callback<JsonElement> {
             override fun onFailure(call: Call<JsonElement>?, t: Throwable?) {
+                _registerOnFailure.value = true
                 Log.d("retrofit", "call failed")
                 Sentry.captureMessage(t.toString(), SentryLevel.ERROR)
 
@@ -69,6 +74,7 @@ constructor(
                     register(registerUserVM)
                 } else {
                     // todo Something happened
+                    _registerOnFailure.value = false
                 }
             }
 

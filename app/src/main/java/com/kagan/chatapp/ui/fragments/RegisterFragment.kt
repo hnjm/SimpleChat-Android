@@ -1,7 +1,6 @@
 package com.kagan.chatapp.ui.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.EditText
 import androidx.fragment.app.Fragment
@@ -38,7 +37,7 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
         setVariables()
         setOnClickListener()
         setOnFocusChangeListener()
-        registerResultObserve()
+        subscribe()
     }
 
     private fun setVariables() {
@@ -147,7 +146,7 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
         }
     }
 
-    private fun registerResultObserve() {
+    private fun subscribe() {
         loginViewModel.registerResultWithRecVM.observe(viewLifecycleOwner, Observer { result ->
             if (result.IsSuccessful) {
                 setVisibilityProgress(false)
@@ -184,6 +183,20 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
                 }
             }
         })
+
+        loginViewModel.registerOnFailure.observe(viewLifecycleOwner, Observer {
+            if (it) {
+                setVisibilityProgress(it)
+            } else {
+                setVisibilityProgress(it)
+                showApiFailure()
+            }
+        })
+    }
+
+    private fun showApiFailure() {
+        Snackbar.make(requireView(), getString(R.string.api_failure), Snackbar.LENGTH_SHORT)
+            .show()
     }
 
     private fun storeTokens(accessToken: String, refreshToken: String) {
