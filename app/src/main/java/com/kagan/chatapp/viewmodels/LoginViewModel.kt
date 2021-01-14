@@ -7,7 +7,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import com.google.gson.JsonElement
 import com.google.gson.JsonSyntaxException
 import com.google.gson.reflect.TypeToken
@@ -21,11 +20,9 @@ import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONException
-import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import javax.inject.Inject
 
 const val TAG = "LoginViewModel"
 
@@ -37,9 +34,9 @@ constructor(
 
     private val _loginResult = MutableLiveData<Boolean>()
     val loginResult: LiveData<Boolean> = _loginResult
-    private val _registerResult = MutableLiveData<APIResultWithRecVM<UserAuthenticationVM>>()
+    private val _registerResultWithRec = MutableLiveData<APIResultWithRecVM<UserAuthenticationVM>>()
     val registerResultWithRecVM: LiveData<APIResultWithRecVM<UserAuthenticationVM>> =
-        _registerResult
+        _registerResultWithRec
 
     private val _registerErrors = MutableLiveData<APIResultVM>()
     val registerErrors: LiveData<APIResultVM> = _registerErrors
@@ -98,13 +95,15 @@ constructor(
                         }
                         201 -> {
                             try {
-                                val body = response.body()?.toString()
+                                val body = response.body()
+                                val apiResultWithRecVMType = object :
+                                    TypeToken<APIResultWithRecVM<UserAuthenticationVM>>() {}.type
                                 val rec = gson.fromJson<APIResultWithRecVM<UserAuthenticationVM>>(
-                                    body.toString(),
-                                    APIResultWithRecVM::class.java
+                                    gson.toJson(body),
+                                    apiResultWithRecVMType
                                 )
 
-                                Log.d(TAG, "body: $body")
+                                _registerResultWithRec.value = rec
 
                             } catch (e: JsonSyntaxException) {
                                 Sentry.captureMessage(e.toString(), SentryLevel.ERROR)

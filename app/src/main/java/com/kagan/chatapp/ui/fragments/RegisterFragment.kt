@@ -16,6 +16,7 @@ import com.kagan.chatapp.models.RegisterUserVM
 import com.kagan.chatapp.utils.ErrorCodes.getDescription
 import com.kagan.chatapp.utils.Utils.hideKeyboard
 import com.kagan.chatapp.viewmodels.LoginViewModel
+import com.kagan.chatapp.viewmodels.TokenPreferenceViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -23,6 +24,7 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
 
     private lateinit var binding: FragmentRegisterBinding
     private val loginViewModel: LoginViewModel by viewModels()
+    private val tokenViewModel: TokenPreferenceViewModel by viewModels()
 
     private lateinit var evUsername: EditText
     private lateinit var evDisplayName: EditText
@@ -147,42 +149,46 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
 
     private fun registerResultObserve() {
         loginViewModel.registerResultWithRecVM.observe(viewLifecycleOwner, Observer { result ->
-            val registerResult = result ?: return@Observer
-
-            if (result.isSuccessful) {
-                Log.d(TAG, "registerResultObserve: ${registerResult.rec}")
+            if (result.IsSuccessful) {
                 setVisibilityProgress(false)
-//                navigate()
+                storeTokens(result.Rec?.AccessToken!!, result.Rec.RefreshToken)
+                navigate()
             }
         })
 
         loginViewModel.registerErrors.observe(viewLifecycleOwner, Observer { result ->
             val registerErrors = result ?: return@Observer
-            registerErrors.errors?.forEach {
-                when (it.field) {
+            setVisibilityProgress(false)
+            registerErrors.Errors?.forEach {
+                when (it.Field) {
                     "UserName" -> {
-                        val text = getDescription(it.errorCode)
+                        val text = getDescription(it.ErrorCode)
                         binding.evUserName.error = text
                     }
                     "Password" -> {
-                        val text = getDescription(it.errorCode)
+                        val text = getDescription(it.ErrorCode)
                         binding.evPassword.error = text
                     }
                     "ConfirmPassword" -> {
-                        val text = getDescription(it.errorCode)
+                        val text = getDescription(it.ErrorCode)
                         binding.evConfirmPassword.error = text
                     }
                     "DisplayName" -> {
-                        val text = getDescription(it.errorCode)
+                        val text = getDescription(it.ErrorCode)
                         binding.evDisplayName.error = text
                     }
                     "Email" -> {
-                        val text = getDescription(it.errorCode)
+                        val text = getDescription(it.ErrorCode)
                         binding.evEmail.error = text
                     }
                 }
             }
         })
+    }
+
+    private fun storeTokens(accessToken: String, refreshToken: String) {
+        tokenViewModel.storeAccessToken(accessToken)
+        tokenViewModel.storeRefreshToken(refreshToken)
     }
 
 
@@ -192,7 +198,6 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
         } else {
             binding.progress.visibility = View.INVISIBLE
         }
-        Snackbar.make(requireView(), "Show progress bar.", Snackbar.LENGTH_SHORT).show()
     }
 
     private fun register() {
