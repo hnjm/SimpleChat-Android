@@ -53,8 +53,8 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
 
         binding.btnRegister.setOnClickListener {
             hideKeyboard(requireContext(), it)
-            setVisibilityProgress(true)
             if (isNotEmpty() && isSamePassword()) {
+                setVisibilityProgress(true)
                 register()
             }
         }
