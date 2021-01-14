@@ -29,7 +29,7 @@
 
         <meta-data
             android:name="io.sentry.dsn"
-            android:value="https://c8a4177483e6401ebe0def6350766f68@o481113.ingest.sentry.io/5575513" />
+            android:value="@string/sentry" />
     </application>
 
 </manifest>
