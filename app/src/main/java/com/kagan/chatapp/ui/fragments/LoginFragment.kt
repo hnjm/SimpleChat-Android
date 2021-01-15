@@ -10,7 +10,11 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.kagan.chatapp.R
 import com.kagan.chatapp.databinding.FragmentLoginBinding
+import com.kagan.chatapp.models.LoginRequestVM
+import com.kagan.chatapp.models.LoginUserRequestVM
+import com.kagan.chatapp.utils.ErrorCodes
 import com.kagan.chatapp.utils.Utils.hideKeyboard
+import com.kagan.chatapp.utils.Utils.showApiFailure
 import com.kagan.chatapp.viewmodels.LoginViewModel
 import com.kagan.chatapp.viewmodels.TokenPreferenceViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -47,22 +51,51 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             forgotPassword()
         }
 
-        loginResult()
+        subscribe()
     }
 
-    private fun loginResult() {
+    private fun subscribe() {
         loginViewModel.loginResult.observe(viewLifecycleOwner, Observer {
             val loginResult = it ?: return@Observer
-            Log.d(TAG, "loginResult: $loginResult")
+            Log.d(TAG, "loginResult burası calısıyor: $loginResult")
+            setVisibilityProgress(false)
 
-            if (!loginResult) {
-                Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show()
-                setVisibilityProgress(false)
+            tokenPreferenceViewModel.storeAccessToken(loginResult.AccessToken)
+            tokenPreferenceViewModel.storeRefreshToken(loginResult.RefreshToken)
+
+            loginViewModel.clearResult()
+//            navigate()
+        })
+
+        loginViewModel.loginFailure.observe(viewLifecycleOwner, Observer {
+            val loginFailure = it ?: return@Observer
+            if (!it) {
+                setVisibilityProgress(it)
+                showApiFailure(requireContext(), requireView())
             }
-            if (loginResult) {
-                setVisibilityProgress(false)
-                Toast.makeText(context, "Navigate to Main Page", Toast.LENGTH_SHORT).show()
+
+            loginViewModel.clearFailure()
+        })
+
+        loginViewModel.loginErrors.observe(viewLifecycleOwner, Observer { result ->
+            val loginError = result ?: return@Observer
+            Log.d(TAG, "loginErrors: $loginError")
+            setVisibilityProgress(false)
+            loginError.Errors?.forEach {
+                when (it.Field) {
+                    "UserName" -> {
+                        binding.evUserName.error = ErrorCodes.getDescription(it.ErrorCode)
+                    }
+
+                    "Password" -> {
+                        binding.evPassword.error = ErrorCodes.getDescription(it.ErrorCode)
+                    }
+                    "General" -> {
+                        binding.evPassword.error = ErrorCodes.getDescription(it.ErrorCode)
+                    }
+                }
             }
+            loginViewModel.clearError()
         })
     }
 
@@ -85,7 +118,14 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             val username = binding.evUserName.editText?.text!!.toString()
             val password = binding.evPassword.editText?.text!!.toString()
 
-//            loginViewModel.login(username, password)
+            val loginRequestVM = LoginRequestVM(username, password)
+            // todo DI
+            val l = LoginUserRequestVM()
+            l.requestBody = loginRequestVM
+
+            Log.d(TAG, "login: $l")
+
+            loginViewModel.login(l)
         } else {
             setErrorMessage()
         }

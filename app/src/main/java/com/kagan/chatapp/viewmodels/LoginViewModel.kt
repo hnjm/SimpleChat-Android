@@ -12,13 +12,10 @@ import com.google.gson.JsonSyntaxException
 import com.google.gson.reflect.TypeToken
 import com.kagan.chatapp.models.*
 import com.kagan.chatapp.repositories.LoginRepository
-import com.kagan.chatapp.utils.Result
 import io.sentry.Sentry
 import io.sentry.SentryLevel
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.json.JSONException
 import retrofit2.Call
 import retrofit2.Callback
@@ -32,8 +29,14 @@ constructor(
     private val gson: Gson
 ) : ViewModel() {
 
-    private val _loginResult = MutableLiveData<Boolean>()
-    val loginResult: LiveData<Boolean> = _loginResult
+    private val _loginResult = MutableLiveData<UserAuthenticationVM>()
+    val loginResult: LiveData<UserAuthenticationVM> = _loginResult
+
+    private val _loginFailure = MutableLiveData<Boolean>()
+    val loginFailure: LiveData<Boolean> = _loginFailure
+
+    private val _loginError = MutableLiveData<APIResultVM>()
+    val loginErrors: LiveData<APIResultVM> = _loginError
 
     private val _registerResultWithRec = MutableLiveData<APIResultWithRecVM<UserAuthenticationVM>>()
     val registerResultWithRecVM: LiveData<APIResultWithRecVM<UserAuthenticationVM>> =
@@ -45,15 +48,51 @@ constructor(
     private val _registerOnFailure = MutableLiveData<Boolean>()
     val registerOnFailure: LiveData<Boolean> = _registerOnFailure
 
-    fun login(username: String, password: String) {
-        viewModelScope.launch(IO) {
-            val result = repository.login(username, password)
-            Log.d(TAG, "login view model: $result")
+    fun login(loginRequestVM: LoginUserRequestVM) {
+        val call = repository.login(loginRequestVM.requestBody)
 
-            withContext(Main) {
-                _loginResult.value = result is Result.Success
+        call.enqueue(object : Callback<JsonElement> {
+            override fun onFailure(call: Call<JsonElement>, t: Throwable) {
+                _loginFailure.value = true
+                Log.d("retrofit", "call failed")
+                Sentry.captureMessage(t.toString(), SentryLevel.ERROR)
+
+                loginRequestVM.requestCount++
+                if (loginRequestVM.requestCount < 3) {
+                    login(loginRequestVM)
+                } else {
+                    // todo Something happened
+                    _loginFailure.value = false
+                }
             }
-        }
+
+            override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
+                when (response.code()) {
+                    400 -> {
+                        loginResponseFailed(response)
+                    }
+                    404 -> {
+                        loginResponseFailed(response)
+                    }
+                    409 -> {
+                        loginResponseFailed(response)
+                    }
+                    200 -> {
+                        try {
+                            val body = response.body()
+                            val user = parseJsonToVM(body!!, UserAuthenticationVM::class.java)
+
+                            _loginResult.value = user
+                        } catch (e: Exception) {
+                            Sentry.captureMessage(e.toString(), SentryLevel.ERROR)
+                        }
+                    }
+                    500 -> {
+                        // todo something happened
+                    }
+                }
+            }
+        })
     }
 
     fun logout() = viewModelScope.launch(IO) {
@@ -85,14 +124,7 @@ constructor(
                     when (response.code()) {
                         400 -> {
                             try {
-                                val errors = response.errorBody()?.string()
-                                val model = gson.fromJson<APIResultVM>(
-                                    errors,
-                                    APIResultVM::class.java
-                                )
-
-                                _registerErrors.value = model
-
+                                registerResponseFailed(response)
                             } catch (e: JsonSyntaxException) {
                                 Sentry.captureMessage(e.toString(), SentryLevel.ERROR)
                             } catch (e: Exception) {
@@ -121,14 +153,7 @@ constructor(
                         }
                         422 -> {
                             try {
-                                val errors = response.errorBody()?.string()
-                                val model = gson.fromJson<APIResultVM>(
-                                    errors,
-                                    APIResultVM::class.java
-                                )
-
-                                _registerErrors.value = model
-
+                                registerResponseFailed(response)
                             } catch (e: JsonSyntaxException) {
                                 Sentry.captureMessage(e.toString(), SentryLevel.ERROR)
                             } catch (e: Exception) {
@@ -142,5 +167,48 @@ constructor(
                 }
             }
         })
+    }
+
+    private fun loginResponseFailed(response: Response<JsonElement>) {
+        _loginError.value = convertResponseToVM(response)
+    }
+
+    private fun registerResponseFailed(response: Response<JsonElement>) {
+        _registerErrors.value = convertResponseToVM(response)
+    }
+
+    private fun convertResponseToVM(response: Response<JsonElement>): APIResultVM? {
+        val errors = response.errorBody()?.string()
+        return gson.fromJson(
+            errors,
+            APIResultVM::class.java
+        )
+    }
+
+    private fun <T : Any> parseJsonToVM(body: JsonElement, clazz: Class<T>): T {
+        var parse: T? = null
+        try {
+            parse = gson.fromJson(
+                gson.toJson(body),
+                clazz
+            )
+        } catch (e: JsonSyntaxException) {
+            Sentry.captureMessage(e.toString(), SentryLevel.ERROR)
+        } catch (e: JSONException) {
+            Sentry.captureMessage(e.toString(), SentryLevel.ERROR)
+        }
+        return parse!!
+    }
+
+    fun clearResult() {
+        _loginResult.value = null
+    }
+
+    fun clearFailure() {
+        _loginFailure.value = null
+    }
+
+    fun clearError() {
+        _loginError.value = null
     }
 }

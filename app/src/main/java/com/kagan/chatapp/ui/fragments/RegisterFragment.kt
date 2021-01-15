@@ -1,6 +1,7 @@
 package com.kagan.chatapp.ui.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.EditText
 import androidx.fragment.app.Fragment
@@ -14,6 +15,7 @@ import com.kagan.chatapp.models.RegisterUserRequestVM
 import com.kagan.chatapp.models.RegisterUserVM
 import com.kagan.chatapp.utils.ErrorCodes.getDescription
 import com.kagan.chatapp.utils.Utils.hideKeyboard
+import com.kagan.chatapp.utils.Utils.showApiFailure
 import com.kagan.chatapp.viewmodels.LoginViewModel
 import com.kagan.chatapp.viewmodels.TokenPreferenceViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -185,18 +187,11 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
         })
 
         loginViewModel.registerOnFailure.observe(viewLifecycleOwner, Observer {
-            if (it) {
+            if (!it) {
                 setVisibilityProgress(it)
-            } else {
-                setVisibilityProgress(it)
-                showApiFailure()
+                showApiFailure(requireContext(), requireView())
             }
         })
-    }
-
-    private fun showApiFailure() {
-        Snackbar.make(requireView(), getString(R.string.api_failure), Snackbar.LENGTH_SHORT)
-            .show()
     }
 
     private fun storeTokens(accessToken: String, refreshToken: String) {
