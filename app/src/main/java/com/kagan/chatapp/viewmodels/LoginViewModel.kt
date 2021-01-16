@@ -95,8 +95,30 @@ constructor(
         })
     }
 
-    fun logout() = viewModelScope.launch(IO) {
-        repository.logout()
+    fun logout(authorization: String) {
+        val call = repository.logout(authorization)
+
+        call.enqueue(object : Callback<JsonElement> {
+            override fun onFailure(call: Call<JsonElement>, t: Throwable) {
+                Log.d(TAG, "onFailure: ")
+            }
+
+            override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
+                when (response.code()) {
+                    200 -> {
+                    }
+                    204 -> {
+                    }
+                    400 -> {
+                    }
+                    409 -> {
+                    }
+                    500 -> {
+                        // todo something happened
+                    }
+                }
+            }
+        })
     }
 
     fun register(registerUserVM: RegisterUserRequestVM) {
@@ -123,13 +145,7 @@ constructor(
                 } else {
                     when (response.code()) {
                         400 -> {
-                            try {
-                                registerResponseFailed(response)
-                            } catch (e: JsonSyntaxException) {
-                                Sentry.captureMessage(e.toString(), SentryLevel.ERROR)
-                            } catch (e: Exception) {
-                                Sentry.captureMessage(e.toString(), SentryLevel.ERROR)
-                            }
+                            registerResponseFailed(response)
                         }
                         201 -> {
                             try {
@@ -152,13 +168,7 @@ constructor(
                             }
                         }
                         422 -> {
-                            try {
-                                registerResponseFailed(response)
-                            } catch (e: JsonSyntaxException) {
-                                Sentry.captureMessage(e.toString(), SentryLevel.ERROR)
-                            } catch (e: Exception) {
-                                Sentry.captureMessage(e.toString(), SentryLevel.ERROR)
-                            }
+                            registerResponseFailed(response)
                         }
                         500 -> {
                             // todo something happened
@@ -178,11 +188,21 @@ constructor(
     }
 
     private fun convertResponseToVM(response: Response<JsonElement>): APIResultVM? {
-        val errors = response.errorBody()?.string()
-        return gson.fromJson(
-            errors,
-            APIResultVM::class.java
-        )
+        var convert: APIResultVM? = null
+        try {
+            val errors = response.errorBody()?.string()
+            convert = gson.fromJson(
+                errors,
+                APIResultVM::class.java
+            )
+        } catch (e: JsonSyntaxException) {
+            Sentry.captureMessage(e.toString(), SentryLevel.ERROR)
+        } catch (e: JSONException) {
+            Sentry.captureMessage(e.toString(), SentryLevel.ERROR)
+        } catch (e: Exception) {
+            Sentry.captureMessage(e.toString(), SentryLevel.ERROR)
+        }
+        return convert
     }
 
     private fun <T : Any> parseJsonToVM(body: JsonElement, clazz: Class<T>): T {
