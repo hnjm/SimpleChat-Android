@@ -1,4 +1,4 @@
-package com.kagan.chatapp.models
+package com.kagan.chatapp.utils
 
 import java.lang.Exception
 

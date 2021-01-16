@@ -3,44 +3,32 @@ package com.kagan.chatapp.ui.fragments
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.commit
+import androidx.fragment.app.replace
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.kagan.chatapp.R
-import com.kagan.chatapp.dao.LoginDAO
 import com.kagan.chatapp.databinding.FragmentLoginBinding
-import com.kagan.chatapp.repositories.LoginRepository
+import com.kagan.chatapp.models.LoginRequestVM
+import com.kagan.chatapp.models.LoginUserRequestVM
+import com.kagan.chatapp.utils.ErrorCodes
 import com.kagan.chatapp.utils.Utils.hideKeyboard
+import com.kagan.chatapp.utils.Utils.showApiFailure
 import com.kagan.chatapp.viewmodels.LoginViewModel
-import com.kagan.chatapp.viewmodels.UserPreferenceViewModel
-import com.kagan.chatapp.viewmodels.viewmodelfactory.LoginViewModelFactory
+import com.kagan.chatapp.viewmodels.TokenPreferenceViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import java.util.*
 
 const val TAG = "LoginFragment"
 
+@AndroidEntryPoint
 class LoginFragment : Fragment(R.layout.fragment_login) {
 
     private lateinit var binding: FragmentLoginBinding
-    private lateinit var userPreferenceViewModel: UserPreferenceViewModel
-    private lateinit var loginDAO: LoginDAO
-    private lateinit var repository: LoginRepository
-    private lateinit var loginViewModel: LoginViewModel
-    private lateinit var loginViewModelFactory: LoginViewModelFactory
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        userPreferenceViewModel =
-            ViewModelProvider(requireActivity()).get(UserPreferenceViewModel::class.java)
-        loginDAO = LoginDAO()
-        repository = LoginRepository(loginDAO)
-        loginViewModelFactory = LoginViewModelFactory(repository)
-        loginViewModel = ViewModelProvider(
-            requireActivity(),
-            loginViewModelFactory
-        ).get(LoginViewModel::class.java)
-    }
-
+    private val tokenPreferenceViewModel: TokenPreferenceViewModel by viewModels()
+    private val loginViewModel: LoginViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -64,23 +52,50 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             forgotPassword()
         }
 
-        loginResult()
+        subscribe()
     }
 
-    private fun loginResult() {
+    private fun subscribe() {
         loginViewModel.loginResult.observe(viewLifecycleOwner, Observer {
             val loginResult = it ?: return@Observer
-            Log.d(TAG, "loginResult: $loginResult")
+            setVisibilityProgress(false)
 
-            if (!loginResult) {
-                Toast.makeText(context, "Error", Toast.LENGTH_SHORT).show()
-                setVisibilityProgress(false)
+            tokenPreferenceViewModel.storeAccessToken(loginResult.AccessToken)
+            tokenPreferenceViewModel.storeRefreshToken(loginResult.RefreshToken)
+
+            loginViewModel.clearResult()
+            navigate()
+        })
+
+        loginViewModel.loginFailure.observe(viewLifecycleOwner, Observer {
+            val loginFailure = it ?: return@Observer
+            if (!loginFailure) {
+                setVisibilityProgress(loginFailure)
+                showApiFailure(requireContext(), requireView())
             }
-            if (loginResult) {
-                setVisibilityProgress(false)
-                userPreferenceViewModel.saveUser(binding.evUserName.editText?.text.toString())
-                Toast.makeText(context, "Navigate to Main Page", Toast.LENGTH_SHORT).show()
+
+            loginViewModel.clearFailure()
+        })
+
+        loginViewModel.loginErrors.observe(viewLifecycleOwner, Observer { result ->
+            val loginError = result ?: return@Observer
+            Log.d(TAG, "loginErrors: $loginError")
+            setVisibilityProgress(false)
+            loginError.Errors?.forEach {
+                when (it.Field) {
+                    "UserName" -> {
+                        binding.evUserName.error = ErrorCodes.getDescription(it.ErrorCode)
+                    }
+
+                    "Password" -> {
+                        binding.evPassword.error = ErrorCodes.getDescription(it.ErrorCode)
+                    }
+                    "General" -> {
+                        binding.evPassword.error = ErrorCodes.getDescription(it.ErrorCode)
+                    }
+                }
             }
+            loginViewModel.clearError()
         })
     }
 
@@ -96,6 +111,13 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         findNavController().navigate(action)
     }
 
+    private fun navigate() {
+        parentFragmentManager.commit {
+            replace<HomeFragment>(R.id.fragment)
+            setReorderingAllowed(true)
+        }
+    }
+
     private fun login() {
         if (usernameIsNotEmpty() && passwordIsNotEmpty()) {
             clearErrorMessage()
@@ -103,7 +125,14 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             val username = binding.evUserName.editText?.text!!.toString()
             val password = binding.evPassword.editText?.text!!.toString()
 
-            loginViewModel.login(username, password)
+            val loginRequestVM = LoginRequestVM(username, password)
+            // todo DI
+            val l = LoginUserRequestVM()
+            l.requestBody = loginRequestVM
+
+            Log.d(TAG, "login: $l")
+
+            loginViewModel.login(l)
         } else {
             setErrorMessage()
         }

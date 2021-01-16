@@ -1,12 +1,16 @@
 package com.kagan.chatapp.repositories
 
-import com.kagan.chatapp.dao.LoginDAO
-import com.kagan.chatapp.models.User
+import com.kagan.chatapp.api.AuthenticationApi
+import com.kagan.chatapp.models.LoginRequestVM
+import com.kagan.chatapp.models.RegisterUserVM
 
-class LoginRepository(private val dao: LoginDAO) {
+class LoginRepository constructor(
+    private val authenticationApi: AuthenticationApi
+) {
 
-    suspend fun login(username: String, password: String) = dao.login(username, password)
-    fun logout() = dao.logout()
-    suspend fun register(user: User) = dao.register(user)
+    fun login(loginRequestVM: LoginRequestVM) =
+        authenticationApi.login(loginRequestVM)
 
+    fun logout(authorization: String) = authenticationApi.logout("Bearer $authorization")
+    fun register(registerUserVM: RegisterUserVM) = authenticationApi.register(registerUserVM)
 }

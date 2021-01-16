@@ -1,30 +1,31 @@
 package com.kagan.chatapp.ui.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.EditText
-import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.kagan.chatapp.R
-import com.kagan.chatapp.dao.LoginDAO
 import com.kagan.chatapp.databinding.FragmentRegisterBinding
-import com.kagan.chatapp.models.User
-import com.kagan.chatapp.repositories.LoginRepository
+import com.kagan.chatapp.models.RegisterUserRequestVM
+import com.kagan.chatapp.models.RegisterUserVM
+import com.kagan.chatapp.utils.ErrorCodes.getDescription
 import com.kagan.chatapp.utils.Utils.hideKeyboard
+import com.kagan.chatapp.utils.Utils.showApiFailure
 import com.kagan.chatapp.viewmodels.LoginViewModel
-import com.kagan.chatapp.viewmodels.viewmodelfactory.LoginViewModelFactory
+import com.kagan.chatapp.viewmodels.TokenPreferenceViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class RegisterFragment : Fragment(R.layout.fragment_register) {
 
     private lateinit var binding: FragmentRegisterBinding
-    private lateinit var dao: LoginDAO
-    private lateinit var repository: LoginRepository
-    private lateinit var factory: LoginViewModelFactory
-    private lateinit var loginViewModel: LoginViewModel
+    private val loginViewModel: LoginViewModel by viewModels()
+    private val tokenViewModel: TokenPreferenceViewModel by viewModels()
 
     private lateinit var evUsername: EditText
     private lateinit var evDisplayName: EditText
@@ -32,22 +33,13 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
     private lateinit var evPassword: EditText
     private lateinit var evConfirmPassword: EditText
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        dao = LoginDAO()
-        repository = LoginRepository(dao)
-        factory = LoginViewModelFactory(repository)
-        loginViewModel =
-            ViewModelProvider(requireActivity(), factory).get(LoginViewModel::class.java)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentRegisterBinding.bind(view)
         setVariables()
         setOnClickListener()
         setOnFocusChangeListener()
-        registerResultObserve()
+        subscribe()
     }
 
     private fun setVariables() {
@@ -62,8 +54,8 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
 
         binding.btnRegister.setOnClickListener {
             hideKeyboard(requireContext(), it)
-            setVisibilityProgress(true)
             if (isNotEmpty() && isSamePassword()) {
+                setVisibilityProgress(true)
                 register()
             }
         }
@@ -78,7 +70,7 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
     }
 
     private fun navigate() {
-       navigateUp()
+        navigateUp()
     }
 
     private fun isNotEmpty(): Boolean {
@@ -113,9 +105,9 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
             binding.evConfirmPassword.error = null
         }
 
-        return evUsername.text?.isNotEmpty() == true || evDisplayName.text?.isNotEmpty() == true
-                || evEmail.text?.isNotEmpty() == true || evPassword.text?.isNotEmpty() == true
-                || evConfirmPassword.text?.isNotEmpty() == true
+        return evUsername.text?.isNotEmpty() == true && evDisplayName.text?.isNotEmpty() == true
+                && evEmail.text?.isNotEmpty() == true && evPassword.text?.isNotEmpty() == true
+                && evConfirmPassword.text?.isNotEmpty() == true
     }
 
     private fun setOnFocusChangeListener() {
@@ -156,20 +148,57 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
         }
     }
 
-    private fun registerResultObserve() {
-        loginViewModel.registerResult.observe(viewLifecycleOwner, Observer {
-            val registerResult = it ?: return@Observer
-
-            if (!registerResult) {
-                Toast.makeText(context, "Register Not Successful", Toast.LENGTH_SHORT).show()
+    private fun subscribe() {
+        loginViewModel.registerResultWithRecVM.observe(viewLifecycleOwner, Observer { result ->
+            if (result.IsSuccessful) {
                 setVisibilityProgress(false)
-            }
-            if (registerResult) {
-                setVisibilityProgress(false)
+                storeTokens(result.Rec?.AccessToken!!, result.Rec.RefreshToken)
                 navigate()
             }
         })
+
+        loginViewModel.registerErrors.observe(viewLifecycleOwner, Observer { result ->
+            val registerErrors = result ?: return@Observer
+            setVisibilityProgress(false)
+            registerErrors.Errors?.forEach {
+                when (it.Field) {
+                    "UserName" -> {
+                        val text = getDescription(it.ErrorCode)
+                        binding.evUserName.error = text
+                    }
+                    "Password" -> {
+                        val text = getDescription(it.ErrorCode)
+                        binding.evPassword.error = text
+                    }
+                    "ConfirmPassword" -> {
+                        val text = getDescription(it.ErrorCode)
+                        binding.evConfirmPassword.error = text
+                    }
+                    "DisplayName" -> {
+                        val text = getDescription(it.ErrorCode)
+                        binding.evDisplayName.error = text
+                    }
+                    "Email" -> {
+                        val text = getDescription(it.ErrorCode)
+                        binding.evEmail.error = text
+                    }
+                }
+            }
+        })
+
+        loginViewModel.registerOnFailure.observe(viewLifecycleOwner, Observer {
+            if (!it) {
+                setVisibilityProgress(it)
+                showApiFailure(requireContext(), requireView())
+            }
+        })
     }
+
+    private fun storeTokens(accessToken: String, refreshToken: String) {
+        tokenViewModel.storeAccessToken(accessToken)
+        tokenViewModel.storeRefreshToken(refreshToken)
+    }
+
 
     private fun setVisibilityProgress(value: Boolean) {
         if (value) {
@@ -177,7 +206,6 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
         } else {
             binding.progress.visibility = View.INVISIBLE
         }
-        Snackbar.make(requireView(), "Show progress bar.", Snackbar.LENGTH_SHORT).show()
     }
 
     private fun register() {
@@ -185,15 +213,20 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
         val displayName = evDisplayName.text.toString()
         val email = evEmail.text.toString()
         val password = evPassword.text.toString()
+        val confirmPassword = evConfirmPassword.text.toString()
 
-        val newUser = User(
-            username = username, displayName = displayName,
-            email = email,
-            password = password
+        val newUser = RegisterUserVM(
+            username = username,
+            password = password,
+            confirmPassword = confirmPassword,
+            displayName = displayName,
+            email = email
         )
 
-        loginViewModel.register(newUser)
+        val request = RegisterUserRequestVM()
+        request.requestBody = newUser
 
+        loginViewModel.register(request)
     }
 
     private fun isSamePassword(): Boolean {
