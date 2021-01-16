@@ -11,6 +11,6 @@ class LoginRepository constructor(
     fun login(loginRequestVM: LoginRequestVM) =
         authenticationApi.login(loginRequestVM)
 
-    suspend fun logout() = authenticationApi.logout()
+    fun logout(authorization: String) = authenticationApi.logout("Bearer $authorization")
     fun register(registerUserVM: RegisterUserVM) = authenticationApi.register(registerUserVM)
 }

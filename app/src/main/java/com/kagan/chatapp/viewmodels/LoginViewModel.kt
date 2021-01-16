@@ -5,7 +5,6 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import com.google.gson.JsonElement
 import com.google.gson.JsonSyntaxException
@@ -14,8 +13,6 @@ import com.kagan.chatapp.models.*
 import com.kagan.chatapp.repositories.LoginRepository
 import io.sentry.Sentry
 import io.sentry.SentryLevel
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.launch
 import org.json.JSONException
 import retrofit2.Call
 import retrofit2.Callback
@@ -47,6 +44,23 @@ constructor(
 
     private val _registerOnFailure = MutableLiveData<Boolean>()
     val registerOnFailure: LiveData<Boolean> = _registerOnFailure
+
+
+    private val _logoutSuccess = MutableLiveData<TokenRefreshVM>()
+    val logoutSuccess: LiveData<TokenRefreshVM> = _logoutSuccess
+
+
+    private val _logoutError = MutableLiveData<APIResultVM>()
+    val logoutError: LiveData<APIResultVM> = _logoutError
+
+
+    private val _logoutRefreshTokenClean = MutableLiveData<Boolean>()
+    val logoutRefreshTokenClean: LiveData<Boolean> = _logoutRefreshTokenClean
+
+    private val _logoutFailure = MutableLiveData<Boolean>()
+    val logoutFailure: LiveData<Boolean> = _logoutFailure
+
+    private var _logoutRequestCount = 0
 
     fun login(loginRequestVM: LoginUserRequestVM) {
         val call = repository.login(loginRequestVM.requestBody)
@@ -100,18 +114,40 @@ constructor(
 
         call.enqueue(object : Callback<JsonElement> {
             override fun onFailure(call: Call<JsonElement>, t: Throwable) {
-                Log.d(TAG, "onFailure: ")
+                _logoutFailure.value = true
+                Log.d("retrofit", "call failed")
+                Sentry.captureMessage(t.toString(), SentryLevel.ERROR)
+
+                _logoutRequestCount++
+                if (_logoutRequestCount < 3) {
+                    logout(authorization)
+                } else {
+                    // todo Something happened
+                    _logoutFailure.value = false
+                }
             }
 
             override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
                 when (response.code()) {
                     200 -> {
+                        try {
+                            val body = response.body()
+                            _logoutSuccess.value = parseJsonToVM(body!!, TokenRefreshVM::class.java)
+                        } catch (e: Exception) {
+                            Sentry.captureMessage(e.toString(), SentryLevel.ERROR)
+                        }
                     }
                     204 -> {
+                        _logoutRefreshTokenClean.value = true
+                        Log.d(TAG, "204: ")
                     }
                     400 -> {
+                        logoutResponseFailed(response)
+                        Log.d(TAG, "400: ")
                     }
                     409 -> {
+                        logoutResponseFailed(response)
+                        Log.d(TAG, "onResponse: 409")
                     }
                     500 -> {
                         // todo something happened
@@ -183,6 +219,10 @@ constructor(
         _loginError.value = convertResponseToVM(response)
     }
 
+    private fun logoutResponseFailed(response: Response<JsonElement>) {
+        _logoutError.value = convertResponseToVM(response)
+    }
+
     private fun registerResponseFailed(response: Response<JsonElement>) {
         _registerErrors.value = convertResponseToVM(response)
     }
@@ -230,5 +270,9 @@ constructor(
 
     fun clearError() {
         _loginError.value = null
+    }
+
+    fun clearLogoutRefreshToken() {
+        _logoutRefreshTokenClean.value = false
     }
 }

@@ -2,11 +2,10 @@ package com.kagan.chatapp.api
 
 import com.google.gson.JsonElement
 import com.kagan.chatapp.models.LoginRequestVM
-import com.kagan.chatapp.models.LoginUserRequestVM
 import com.kagan.chatapp.models.RegisterUserVM
 import retrofit2.Call
 import retrofit2.http.Body
-import retrofit2.http.Field
+import retrofit2.http.Header
 import retrofit2.http.POST
 
 interface AuthenticationApi {
@@ -15,7 +14,7 @@ interface AuthenticationApi {
     fun login(@Body loginRequestVM: LoginRequestVM): Call<JsonElement>
 
     @POST("tokens/revoke")
-    suspend fun logout()
+    fun logout(@Header("Authorization") token: String): Call<JsonElement>
 
     @POST("authentications/register")
     fun register(@Body registerUserVM: RegisterUserVM): Call<JsonElement>

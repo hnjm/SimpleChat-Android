@@ -3,8 +3,9 @@ package com.kagan.chatapp.ui.fragments
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.commit
+import androidx.fragment.app.replace
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -57,20 +58,19 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     private fun subscribe() {
         loginViewModel.loginResult.observe(viewLifecycleOwner, Observer {
             val loginResult = it ?: return@Observer
-            Log.d(TAG, "loginResult burası calısıyor: $loginResult")
             setVisibilityProgress(false)
 
             tokenPreferenceViewModel.storeAccessToken(loginResult.AccessToken)
             tokenPreferenceViewModel.storeRefreshToken(loginResult.RefreshToken)
 
             loginViewModel.clearResult()
-//            navigate()
+            navigate()
         })
 
         loginViewModel.loginFailure.observe(viewLifecycleOwner, Observer {
             val loginFailure = it ?: return@Observer
-            if (!it) {
-                setVisibilityProgress(it)
+            if (!loginFailure) {
+                setVisibilityProgress(loginFailure)
                 showApiFailure(requireContext(), requireView())
             }
 
@@ -109,6 +109,13 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
     private fun navigate(action: Int) {
         findNavController().navigate(action)
+    }
+
+    private fun navigate() {
+        parentFragmentManager.commit {
+            replace<HomeFragment>(R.id.fragment)
+            setReorderingAllowed(true)
+        }
     }
 
     private fun login() {
