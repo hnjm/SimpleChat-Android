@@ -8,7 +8,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import com.google.android.material.snackbar.Snackbar
 import com.kagan.chatapp.R
 import com.kagan.chatapp.databinding.FragmentRegisterBinding
 import com.kagan.chatapp.models.RegisterUserRequestVM
@@ -54,7 +53,7 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
 
         binding.btnRegister.setOnClickListener {
             hideKeyboard(requireContext(), it)
-            if (isNotEmpty() && isSamePassword()) {
+            if (isNotEmpty()) {
                 setVisibilityProgress(true)
                 register()
             }
@@ -161,25 +160,26 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
             val registerErrors = result ?: return@Observer
             setVisibilityProgress(false)
             registerErrors.Errors?.forEach {
+                Log.d(TAG, "errors: ${it.Field}")
                 when (it.Field) {
                     "UserName" -> {
-                        val text = getDescription(it.ErrorCode)
+                        val text = getDescription(it.ErrorCode, requireContext())
                         binding.evUserName.error = text
                     }
                     "Password" -> {
-                        val text = getDescription(it.ErrorCode)
+                        val text = getDescription(it.ErrorCode, requireContext())
                         binding.evPassword.error = text
                     }
                     "ConfirmPassword" -> {
-                        val text = getDescription(it.ErrorCode)
+                        val text = getDescription(it.ErrorCode, requireContext())
                         binding.evConfirmPassword.error = text
                     }
                     "DisplayName" -> {
-                        val text = getDescription(it.ErrorCode)
+                        val text = getDescription(it.ErrorCode, requireContext())
                         binding.evDisplayName.error = text
                     }
                     "Email" -> {
-                        val text = getDescription(it.ErrorCode)
+                        val text = getDescription(it.ErrorCode, requireContext())
                         binding.evEmail.error = text
                     }
                 }
@@ -227,11 +227,5 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
         request.requestBody = newUser
 
         loginViewModel.register(request)
-    }
-
-    private fun isSamePassword(): Boolean {
-        val password = evPassword.text.toString()
-        val confirmPassword = evConfirmPassword.text.toString()
-        return password == confirmPassword
     }
 }

@@ -84,14 +84,17 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             loginError.Errors?.forEach {
                 when (it.Field) {
                     "UserName" -> {
-                        binding.evUserName.error = ErrorCodes.getDescription(it.ErrorCode)
+                        binding.evUserName.error =
+                            ErrorCodes.getDescription(it.ErrorCode, requireContext())
                     }
 
                     "Password" -> {
-                        binding.evPassword.error = ErrorCodes.getDescription(it.ErrorCode)
+                        binding.evPassword.error =
+                            ErrorCodes.getDescription(it.ErrorCode, requireContext())
                     }
                     "General" -> {
-                        binding.evPassword.error = ErrorCodes.getDescription(it.ErrorCode)
+                        binding.evUserName.error =
+                            ErrorCodes.getDescription(it.ErrorCode, requireContext())
                     }
                 }
             }
