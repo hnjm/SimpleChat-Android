@@ -4,12 +4,20 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.commit
+import androidx.fragment.app.replace
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.kagan.chatapp.R
 import com.kagan.chatapp.databinding.FragmentHomeBinding
+import com.kagan.chatapp.models.UserAuthenticationVM
+import com.kagan.chatapp.utils.UserEvent
 import com.kagan.chatapp.viewmodels.LoginViewModel
+import com.kagan.chatapp.viewmodels.SharedViewModel
 import com.kagan.chatapp.viewmodels.TokenPreferenceViewModel
+import com.kagan.chatapp.viewmodels.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -17,6 +25,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
     private lateinit var binding: FragmentHomeBinding
     private val loginViewModel: LoginViewModel by viewModels()
+    private val userViewModel: UserViewModel by viewModels()
+    private lateinit var sharedViewModel: SharedViewModel
     private val tokenPreferenceViewModel: TokenPreferenceViewModel by viewModels()
     private lateinit var accessToken: String
 
@@ -24,21 +34,70 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentHomeBinding.bind(view)
         init()
+        getUser()
         subscribe()
     }
 
-    private fun subscribe() {
-        tokenPreferenceViewModel.accessToken.observe(viewLifecycleOwner, Observer {
-            val accessToken = it ?: return@Observer
-            this.accessToken = accessToken
+    private fun getUser() {
+        sharedViewModel.currentUser.observe(viewLifecycleOwner, Observer {
+            val user = it ?: return@Observer
+            Log.d(TAG, "getUser: ID=${user.Id}")
+            userViewModel.getUser(user.Id)
         })
+    }
+
+    private fun subscribe() {
+        userViewModel.isLoading.observe(viewLifecycleOwner, {
+
+            when (it) {
+                is UserEvent.Loading -> {
+                    showProgressBar()
+                }
+                is UserEvent.Success -> {
+                    hideProgressBar()
+                }
+            }
+        })
+
+        tokenPreferenceViewModel.accessToken.observe(viewLifecycleOwner, Observer {
+            val token = it ?: return@Observer
+            accessToken = token
+        })
+
 
     }
 
+    private fun hideProgressBar() {
+        binding.progressBarTest.visibility = View.INVISIBLE
+    }
+
+    // todo dont need
+    private fun showProgressBar() {
+        binding.progressBarTest.visibility = View.VISIBLE
+    }
+
     private fun init() {
-        binding.btnSignOut.setOnClickListener {
-            loginViewModel.logout(accessToken)
-            tokenPreferenceViewModel.storeRefreshToken("")
+        sharedViewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
+        binding.btnChatRooms.setOnClickListener { }
+        binding.btnUsers.setOnClickListener { }
+        binding.btnSettings.setOnClickListener { }
+
+        binding.btnLogout.setOnClickListener {
+            logout()
+        }
+    }
+
+    private fun navigate(action: Int) {
+        findNavController().navigate(action)
+    }
+
+    private fun logout() {
+        loginViewModel.logout(accessToken)
+        tokenPreferenceViewModel.storeRefreshToken("")
+
+        parentFragmentManager.commit {
+            replace<LoginFragment>(R.id.fragment)
+            setReorderingAllowed(true)
         }
     }
 }

@@ -8,6 +8,7 @@ import androidx.fragment.app.commit
 import androidx.fragment.app.replace
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.kagan.chatapp.R
 import com.kagan.chatapp.databinding.FragmentLoginBinding
@@ -17,6 +18,7 @@ import com.kagan.chatapp.utils.ErrorCodes
 import com.kagan.chatapp.utils.Utils.hideKeyboard
 import com.kagan.chatapp.utils.Utils.showApiFailure
 import com.kagan.chatapp.viewmodels.LoginViewModel
+import com.kagan.chatapp.viewmodels.SharedViewModel
 import com.kagan.chatapp.viewmodels.TokenPreferenceViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
@@ -29,6 +31,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     private lateinit var binding: FragmentLoginBinding
     private val tokenPreferenceViewModel: TokenPreferenceViewModel by viewModels()
     private val loginViewModel: LoginViewModel by viewModels()
+    private lateinit var sharedViewModel: SharedViewModel
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -37,6 +40,8 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     }
 
     private fun init() {
+        sharedViewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
+
         setFocusChangeListener()
 
         binding.btnLogin.setOnClickListener {
@@ -63,6 +68,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             tokenPreferenceViewModel.storeAccessToken(loginResult.AccessToken)
             tokenPreferenceViewModel.storeRefreshToken(loginResult.RefreshToken)
 
+            sharedViewModel.postValue(loginResult)
             loginViewModel.clearResult()
             navigate()
         })

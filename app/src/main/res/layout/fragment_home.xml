@@ -6,6 +6,16 @@
     android:layout_height="match_parent"
     tools:context=".ui.fragments.LoginFragment">
 
+    <ProgressBar
+        android:id="@+id/progressBarTest"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/guideline_end"
+        app:layout_constraintStart_toStartOf="@id/guideline_start"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
     <ImageView
         android:id="@+id/ivUser"
         android:layout_width="wrap_content"

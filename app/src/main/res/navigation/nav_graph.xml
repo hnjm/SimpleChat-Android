@@ -43,4 +43,8 @@
         android:id="@+id/passwordChangeFragment"
         android:name="com.kagan.chatapp.ui.fragments.PasswordChangeFragment"
         android:label="PasswordChangeFragment" />
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.kagan.chatapp.ui.fragments.HomeFragment"
+        android:label="HomeFragment" />
 </navigation>
