@@ -151,7 +151,7 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
         loginViewModel.registerResultWithRecVM.observe(viewLifecycleOwner, Observer { result ->
             if (result.IsSuccessful) {
                 setVisibilityProgress(false)
-                storeTokens(result.Rec?.AccessToken!!, result.Rec.RefreshToken)
+                storeTokens(result.Rec?.TokenData?.AccessToken!!, result.Rec.TokenData.RefreshToken)
                 navigate()
             }
         })

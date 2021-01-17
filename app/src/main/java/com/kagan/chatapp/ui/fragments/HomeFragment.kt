@@ -12,7 +12,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.kagan.chatapp.R
 import com.kagan.chatapp.databinding.FragmentHomeBinding
-import com.kagan.chatapp.models.UserAuthenticationVM
 import com.kagan.chatapp.utils.UserEvent
 import com.kagan.chatapp.viewmodels.LoginViewModel
 import com.kagan.chatapp.viewmodels.SharedViewModel
@@ -34,21 +33,19 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentHomeBinding.bind(view)
         init()
-        getUser()
         subscribe()
+        getUser()
     }
 
     private fun getUser() {
         sharedViewModel.currentUser.observe(viewLifecycleOwner, Observer {
-            val user = it ?: return@Observer
-            Log.d(TAG, "getUser: ID=${user.Id}")
-            userViewModel.getUser(user.Id)
+            val currentUser = it ?: return@Observer
+            userViewModel.getUser(currentUser)
         })
     }
 
     private fun subscribe() {
         userViewModel.isLoading.observe(viewLifecycleOwner, {
-
             when (it) {
                 is UserEvent.Loading -> {
                     showProgressBar()
@@ -57,6 +54,10 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                     hideProgressBar()
                 }
             }
+        })
+
+        userViewModel.user.observe(viewLifecycleOwner, {
+            binding.tvUserName.text = it.Rec?.DisplayName
         })
 
         tokenPreferenceViewModel.accessToken.observe(viewLifecycleOwner, Observer {

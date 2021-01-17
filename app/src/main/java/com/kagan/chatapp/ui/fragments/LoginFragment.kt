@@ -65,8 +65,8 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             val loginResult = it ?: return@Observer
             setVisibilityProgress(false)
 
-            tokenPreferenceViewModel.storeAccessToken(loginResult.AccessToken)
-            tokenPreferenceViewModel.storeRefreshToken(loginResult.RefreshToken)
+            tokenPreferenceViewModel.storeAccessToken(loginResult.TokenData.AccessToken)
+            tokenPreferenceViewModel.storeRefreshToken(loginResult.TokenData.RefreshToken)
 
             sharedViewModel.postValue(loginResult)
             loginViewModel.clearResult()

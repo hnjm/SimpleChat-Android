@@ -7,7 +7,8 @@ import java.util.*
 class UserRepository constructor(
     private val userApi: UserApi
 ) {
-    fun getUsers() = userApi.getUsers()
-    fun getUser(id: UUID) = userApi.getUser(id)
-    fun updateUser(id: UUID, user: UserUpdateVM) = userApi.updateUser(id, user)
+    fun getUsers(accessToken: String) = userApi.getUsers("Bearer $accessToken")
+    fun getUser(id: UUID, accessToken: String) = userApi.getUser(id, "Bearer $accessToken")
+    fun updateUser(id: UUID, user: UserUpdateVM, accessToken: String) =
+        userApi.updateUser(id, user, "Bearer $accessToken")
 }
