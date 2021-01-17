@@ -20,4 +20,8 @@
     <string name="logo">logo</string>
     <string name="evErrorMessage">%s can not be empty.</string>
     <string name="api_failure">Api cannot answer, please try again.</string>
+    <string name="login">Login</string>
+    <string name="chat_rooms">Chat Rooms</string>
+    <string name="users">Users</string>
+    <string name="settings">Settings</string>
 </resources>
