@@ -1,7 +1,6 @@
 package com.kagan.chatapp.ui.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
@@ -50,7 +49,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 is UserEvent.Loading -> {
                     showProgressBar()
                 }
-                is UserEvent.Success -> {
+                is UserEvent.Valid -> {
                     hideProgressBar()
                 }
             }
@@ -94,6 +93,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
     private fun logout() {
         loginViewModel.logout(accessToken)
+        tokenPreferenceViewModel.storeAccessToken("")
         tokenPreferenceViewModel.storeRefreshToken("")
 
         parentFragmentManager.commit {

@@ -13,4 +13,6 @@ class LoginRepository constructor(
 
     fun logout(authorization: String) = authenticationApi.logout("Bearer $authorization")
     fun register(registerUserVM: RegisterUserVM) = authenticationApi.register(registerUserVM)
+    suspend fun checkTokenIsValid(accessToken: String) =
+        authenticationApi.checkTokenIsValid("Bearer $accessToken")
 }

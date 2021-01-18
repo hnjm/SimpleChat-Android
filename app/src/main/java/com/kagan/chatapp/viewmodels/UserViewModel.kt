@@ -62,7 +62,7 @@ constructor(
                                 )
 
                             _user.value = recUser
-                            _isLoading.value = UserEvent.Success
+                            _isLoading.value = UserEvent.Valid
 
                         } catch (e: JsonSyntaxException) {
                             Sentry.captureMessage(e.toString(), SentryLevel.ERROR)

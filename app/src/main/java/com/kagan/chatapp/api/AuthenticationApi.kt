@@ -4,6 +4,7 @@ import com.google.gson.JsonElement
 import com.kagan.chatapp.models.LoginRequestVM
 import com.kagan.chatapp.models.RegisterUserVM
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.Header
 import retrofit2.http.POST
@@ -18,4 +19,7 @@ interface AuthenticationApi {
 
     @POST("authentications/register")
     fun register(@Body registerUserVM: RegisterUserVM): Call<JsonElement>
+
+    @POST("tokens/validate")
+    suspend fun checkTokenIsValid(@Header("Authorization") accessToken: String): Response<Unit>
 }
