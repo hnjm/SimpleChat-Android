@@ -4,24 +4,16 @@ import android.animation.ObjectAnimator
 import android.animation.PropertyValuesHolder
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
-import android.widget.Toast
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import com.kagan.chatapp.databinding.ActivitySplashBinding
-import com.kagan.chatapp.viewmodels.TokenPreferenceViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.*
-import kotlinx.coroutines.Dispatchers.Main
 
 const val TAG = "SplashActivity"
 
 @AndroidEntryPoint
 class SplashActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySplashBinding
-    private val tokenPreferenceViewModel: TokenPreferenceViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,7 +27,7 @@ class SplashActivity : AppCompatActivity() {
         translateUpY()
         scaleUpLogo()
 
-        observe()
+        startActivity()
     }
 
     private fun translateDownY() {
@@ -65,19 +57,5 @@ class SplashActivity : AppCompatActivity() {
     private fun startActivity() {
         startActivity(Intent(this, LoginActivity::class.java))
         finish()
-    }
-
-    private fun observe() {
-        tokenPreferenceViewModel.accessToken.observe(this, { accessToken ->
-            CoroutineScope(Main).launch {
-                delay(1000)
-
-                if (accessToken == null) {
-                    startActivity()
-                } else {
-
-                }
-            }
-        })
     }
 }

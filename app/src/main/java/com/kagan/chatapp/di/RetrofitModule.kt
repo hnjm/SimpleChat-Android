@@ -3,6 +3,7 @@ package com.kagan.chatapp.di
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.kagan.chatapp.api.AuthenticationApi
+import com.kagan.chatapp.api.UserApi
 import com.kagan.chatapp.utils.Constants
 import com.kagan.chatapp.utils.UnsafeOkHttpClient
 import dagger.Module
@@ -39,5 +40,12 @@ object RetrofitModule {
         return retrofit
             .build()
             .create(AuthenticationApi::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun provideUserService(retrofit: Retrofit.Builder): UserApi {
+        return retrofit.build()
+            .create(UserApi::class.java)
     }
 }

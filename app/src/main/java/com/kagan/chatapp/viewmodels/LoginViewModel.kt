@@ -5,14 +5,17 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import com.google.gson.JsonElement
 import com.google.gson.JsonSyntaxException
 import com.google.gson.reflect.TypeToken
 import com.kagan.chatapp.models.*
 import com.kagan.chatapp.repositories.LoginRepository
+import com.kagan.chatapp.utils.UserEvent
 import io.sentry.Sentry
 import io.sentry.SentryLevel
+import kotlinx.coroutines.launch
 import org.json.JSONException
 import retrofit2.Call
 import retrofit2.Callback
@@ -25,6 +28,9 @@ constructor(
     private val repository: LoginRepository,
     private val gson: Gson
 ) : ViewModel() {
+
+    private val _dataState = MutableLiveData<UserEvent>()
+    val dataState: LiveData<UserEvent> = _dataState
 
     private val _loginResult = MutableLiveData<UserAuthenticationVM>()
     val loginResult: LiveData<UserAuthenticationVM> = _loginResult
@@ -45,14 +51,11 @@ constructor(
     private val _registerOnFailure = MutableLiveData<Boolean>()
     val registerOnFailure: LiveData<Boolean> = _registerOnFailure
 
-
     private val _logoutSuccess = MutableLiveData<TokenRefreshVM>()
     val logoutSuccess: LiveData<TokenRefreshVM> = _logoutSuccess
 
-
     private val _logoutError = MutableLiveData<APIResultVM>()
     val logoutError: LiveData<APIResultVM> = _logoutError
-
 
     private val _logoutRefreshTokenClean = MutableLiveData<Boolean>()
     val logoutRefreshTokenClean: LiveData<Boolean> = _logoutRefreshTokenClean
@@ -61,6 +64,28 @@ constructor(
     val logoutFailure: LiveData<Boolean> = _logoutFailure
 
     private var _logoutRequestCount = 0
+
+    private val _isValid = MutableLiveData<Boolean>()
+    val isValid: LiveData<Boolean> = _isValid
+
+    fun checkTokenIsValid(accessToken: String) = viewModelScope.launch {
+        _dataState.value = UserEvent.Loading
+        val response = repository.checkTokenIsValid(accessToken)
+
+        when (response.code()) {
+            200 -> {
+                _isValid.value = true
+                _dataState.value = UserEvent.Valid
+            }
+            401 -> {
+                _isValid.value = false
+                _dataState.value = UserEvent.NotValid
+            }
+            500 -> {
+                // Todo something happened
+            }
+        }
+    }
 
     fun login(loginRequestVM: LoginUserRequestVM) {
         val call = repository.login(loginRequestVM.requestBody)

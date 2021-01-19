@@ -16,4 +16,11 @@
         <item name="android:layout_marginTop">8dp</item>
         <item name="android:padding">18dp</item>
     </style>
+
+    <style name="MyLogoutButton" parent="@style/Widget.MaterialComponents.Button.TextButton">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/logout_button_text</item>
+        <item name="android:layout_marginBottom">32dp</item>
+    </style>
 </resources>
