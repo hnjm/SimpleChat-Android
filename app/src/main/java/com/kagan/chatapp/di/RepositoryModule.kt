@@ -1,7 +1,9 @@
 package com.kagan.chatapp.di
 
 import com.kagan.chatapp.api.AuthenticationApi
+import com.kagan.chatapp.api.ChatRoomsApi
 import com.kagan.chatapp.api.UserApi
+import com.kagan.chatapp.repositories.ChatRoomRepository
 import com.kagan.chatapp.repositories.LoginRepository
 import com.kagan.chatapp.repositories.UserRepository
 import dagger.Module
@@ -22,4 +24,8 @@ class RepositoryModule {
     @Singleton
     @Provides
     fun provideUserRepository(userApi: UserApi): UserRepository = UserRepository(userApi)
+
+    @Singleton
+    @Provides
+    fun provideChatRoomsRepository(chatRoomsApi: ChatRoomsApi) = ChatRoomRepository(chatRoomsApi)
 }

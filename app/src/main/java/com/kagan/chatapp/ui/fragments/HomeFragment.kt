@@ -78,7 +78,9 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
     private fun init() {
         sharedViewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
-        binding.btnChatRooms.setOnClickListener { }
+        binding.btnChatRooms.setOnClickListener {
+            navigate(R.id.action_homeFragment_to_chatRoomsFragment)
+        }
         binding.btnUsers.setOnClickListener { }
         binding.btnSettings.setOnClickListener { }
 
