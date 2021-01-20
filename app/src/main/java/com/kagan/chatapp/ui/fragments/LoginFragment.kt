@@ -64,8 +64,10 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     private fun subscribe() {
 
         tokenPreferenceViewModel.accessToken.observe(viewLifecycleOwner, { accessToken ->
-            accessToken?.let {
-                loginViewModel.checkTokenIsValid(it)
+            if (accessToken != null) {
+                loginViewModel.checkTokenIsValid(accessToken)
+            } else {
+                loginViewModel.setState(UserEvent.NotValid)
             }
         })
 
