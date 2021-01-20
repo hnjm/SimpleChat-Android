@@ -98,9 +98,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         tokenPreferenceViewModel.storeAccessToken("")
         tokenPreferenceViewModel.storeRefreshToken("")
 
-        parentFragmentManager.commit {
-            replace<LoginFragment>(R.id.fragment)
-            setReorderingAllowed(true)
-        }
+        navigate(R.id.action_homeFragment_to_loginFragment)
     }
 }
