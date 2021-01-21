@@ -9,20 +9,36 @@ import java.util.*
 interface ChatRoomsApi {
 
     @GET("ChatRooms/")
-    fun getChatRooms(): Call<JsonElement>
+    fun getChatRooms(@Header("Authorization") auth: String,): Call<JsonElement>
 
     @POST("ChatRooms/")
-    fun postChatRooms(@Body chatRoom: AddVM): Call<JsonElement>
+    fun postChatRooms(
+        @Header("Authorization") auth: String,
+        @Body chatRoom: AddVM
+    ): Call<JsonElement>
 
     @GET("ChatRooms/{id}/users")
-    fun getChatRoomUsers(@Path("id") id: UUID): Call<JsonElement>
+    fun getChatRoomUsers(
+        @Header("Authorization") auth: String,
+        @Path("id") id: UUID
+    ): Call<JsonElement>
 
     @GET("ChatRooms/{id}/")
-    fun getChatRoom(@Path("id") id: UUID): Call<JsonElement>
+    fun getChatRoom(
+        @Header("Authorization") auth: String,
+        @Path("id") id: UUID
+    ): Call<JsonElement>
 
     @PUT("ChatRooms/{id}/")
-    fun putChatRoom(@Path("id") id: UUID, @Body chatRoom: AddVM): Call<JsonElement>
+    fun putChatRoom(
+        @Header("Authorization") auth: String,
+        @Path("id") id: UUID,
+        @Body chatRoom: AddVM
+    ): Call<JsonElement>
 
     @DELETE("ChatRooms/{id}/")
-    fun deleteChatRoom(@Path("id") id: UUID): Call<JsonElement>
+    fun deleteChatRoom(
+        @Header("Authorization") auth: String,
+        @Path("id") id: UUID
+    ): Call<JsonElement>
 }

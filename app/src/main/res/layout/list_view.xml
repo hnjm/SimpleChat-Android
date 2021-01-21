@@ -2,10 +2,12 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mainLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/cvLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -20,6 +22,7 @@
             android:padding="4dp">
 
             <ImageView
+                android:id="@+id/ivUserPics"
                 android:layout_width="52dp"
                 android:layout_height="52dp"
                 android:layout_marginStart="16dp"
@@ -35,10 +38,12 @@
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/tvUsernameOrTitle"
                     style="@style/SubHead"
                     tools:text="User Names or Title" />
 
                 <TextView
+                    android:id="@+id/tvDesc"
                     style="@style/ListDecs"
                     tools:text="@string/lorem" />
 
