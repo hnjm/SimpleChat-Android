@@ -23,4 +23,21 @@
         <item name="android:textColor">@color/logout_button_text</item>
         <item name="android:layout_marginBottom">32dp</item>
     </style>
+
+    <style name="ListView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+    </style>
+
+    <style name="SubHead" parent="ListView">
+        <item name="android:lines">1</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="ListDecs" parent="ListView">
+        <item name="android:lines">2</item>
+        <item name="android:maxLines">2</item>
+        <item name="android:textColor">@color/list_desc</item>
+    </style>
 </resources>

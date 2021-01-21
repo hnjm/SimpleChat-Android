@@ -64,14 +64,16 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     private fun subscribe() {
 
         tokenPreferenceViewModel.accessToken.observe(viewLifecycleOwner, { accessToken ->
-            accessToken?.let {
-                loginViewModel.checkTokenIsValid(it)
+            if (accessToken != null) {
+                loginViewModel.checkTokenIsValid(accessToken)
+            } else {
+                loginViewModel.setState(UserEvent.NotValid)
             }
         })
 
         loginViewModel.isValid.observe(viewLifecycleOwner, {
             if (it) {
-                navigate()
+                navigate(R.id.action_loginFragment_to_homeFragment)
             }
         })
 
@@ -99,7 +101,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
             sharedViewModel.postValue(loginResult)
             loginViewModel.clearResult()
-            navigate()
+            navigate(R.id.action_loginFragment_to_homeFragment)
         })
 
         loginViewModel.loginFailure.observe(viewLifecycleOwner, Observer {
@@ -157,12 +159,12 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         findNavController().navigate(action)
     }
 
-    private fun navigate() {
-        parentFragmentManager.commit {
-            replace<HomeFragment>(R.id.fragment)
-            setReorderingAllowed(true)
-        }
-    }
+//    private fun navigate() {
+//        parentFragmentManager.commit {
+//            replace<HomeFragment>(R.id.fragment)
+//            setReorderingAllowed(true)
+//        }
+//    }
 
     private fun login() {
         if (usernameIsNotEmpty() && passwordIsNotEmpty()) {

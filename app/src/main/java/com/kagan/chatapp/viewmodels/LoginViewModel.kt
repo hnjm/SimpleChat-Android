@@ -300,4 +300,8 @@ constructor(
     fun clearLogoutRefreshToken() {
         _logoutRefreshTokenClean.value = false
     }
+
+    fun setState(state: UserEvent) {
+        _dataState.value = state
+    }
 }
