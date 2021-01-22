@@ -16,7 +16,7 @@ import com.kagan.chatapp.viewmodels.TokenPreferenceViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class ChatRoomsFragment : Fragment(R.layout.fragment_chat_rooms) {
+class ChatRoomsFragment : Fragment(R.layout.fragment_chat_rooms), View.OnClickListener {
 
     private lateinit var binding: FragmentChatRoomsBinding
     private val chatRoomsViewModel: ChatRoomsViewModel by viewModels()
@@ -36,11 +36,11 @@ class ChatRoomsFragment : Fragment(R.layout.fragment_chat_rooms) {
 
     private fun init() {
         // todo will learn how to pass args with dagger2
-        chatRoomsAdapter = ChatRoomsAdapter(chatRoomsList)
+        chatRoomsAdapter = ChatRoomsAdapter(chatRoomsList, this)
         binding.chatRooms.chatRoomRecyclerView.adapter = chatRoomsAdapter
 
         binding.chatRooms.fabCreateRoom.setOnClickListener {
-            findNavController().navigate(R.id.action_chatRoomsFragment_to_createRoomFragment)
+            navigate(R.id.action_chatRoomsFragment_to_createRoomFragment)
         }
     }
 
@@ -78,5 +78,15 @@ class ChatRoomsFragment : Fragment(R.layout.fragment_chat_rooms) {
             binding.chatRoomsProgressBar.visibility = View.GONE
             binding.chatRooms.root.visibility = View.VISIBLE
         }
+    }
+
+    override fun onClick(v: View?) {
+        navigate(R.id.action_chatRoomsFragment_to_chatRoomFragment)
+    }
+
+    private fun navController() = findNavController()
+
+    private fun navigate(action: Int) {
+        navController().navigate(action)
     }
 }

@@ -10,7 +10,7 @@ import com.kagan.chatapp.databinding.FragmentChatRoomBinding
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class ChatRoomFragment : Fragment(R.layout.layout_chat_room) {
+class ChatRoomFragment : Fragment(R.layout.fragment_chat_room) {
 
     private lateinit var binding: FragmentChatRoomBinding
 
@@ -25,7 +25,7 @@ class ChatRoomFragment : Fragment(R.layout.layout_chat_room) {
 
     private suspend fun init() {
         delay(1000)
-        binding.chatRoomProgressBar.visibility = View.GONE
+        displayProgressBar(false)
         binding.chatRoom.topAppBar.setNavigationOnClickListener {
             navigateUp()
         }
@@ -33,7 +33,7 @@ class ChatRoomFragment : Fragment(R.layout.layout_chat_room) {
         binding.chatRoom.topAppBar.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.edit_room -> {
-                    navigate()
+                    navigate(R.id.action_chatRoomFragment_to_editRoomFragment)
                     true
                 }
                 R.id.search -> {
@@ -42,6 +42,17 @@ class ChatRoomFragment : Fragment(R.layout.layout_chat_room) {
                 }
                 else -> false
             }
+        }
+    }
+
+
+    private fun displayProgressBar(b: Boolean) {
+        if (b) {
+            binding.chatRoomProgressBar.visibility = View.VISIBLE
+            binding.chatRoom.root.visibility = View.GONE
+        } else {
+            binding.chatRoomProgressBar.visibility = View.GONE
+            binding.chatRoom.root.visibility = View.VISIBLE
         }
     }
 
