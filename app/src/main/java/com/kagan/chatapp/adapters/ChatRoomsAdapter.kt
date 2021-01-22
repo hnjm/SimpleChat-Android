@@ -1,18 +1,21 @@
-package com.kagan.chatapp
+package com.kagan.chatapp.adapters
 
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
-import com.kagan.chatapp.models.chatrooms.AddVM
+import com.kagan.chatapp.R
+import com.kagan.chatapp.models.chatrooms.ChatRoomVM
+import com.kagan.chatapp.utils.OnClickListener
 
 class ChatRoomsAdapter
-constructor(private val itemList: ArrayList<AddVM>) :
+constructor(
+    private val itemList: ArrayList<ChatRoomVM>,
+    private val clickListener: OnClickListener
+) :
     RecyclerView.Adapter<ChatRoomsAdapter.ViewHolder>() {
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -33,11 +36,7 @@ constructor(private val itemList: ArrayList<AddVM>) :
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.apply {
             cardViewLayout.setOnClickListener {
-                Toast.makeText(
-                    holder.itemView.context, "Chat Room id:" +
-                            "${itemList[position].Id}",
-                    Toast.LENGTH_SHORT
-                ).show()
+                clickListener.onclick(itemList[position].Id)
             }
             ivUserPics.setImageResource(R.drawable.ic_baseline_android_24)
             tvUserOrTitle.text = itemList[position].Name

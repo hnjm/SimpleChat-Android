@@ -1,6 +1,6 @@
 package com.kagan.chatapp.models.chatrooms
 
-data class AddVM(
+data class ChatRoomUpdateVM(
     val Description: String,
     val IsMain: Boolean,
     val IsOneToOneChat: Boolean,

@@ -30,4 +30,21 @@
     <string name="create">Create</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="name">Name</string>
+    <string name="description">Description</string>
+    <string name="make_private">Make Private</string>
+    <string name="selected_user">Selected Users %d/%d</string>
+    <string name="filter_user">Filter Users</string>
+    <string name="create_edit">Create/Edit</string>
+    <string name="create_room">Create Room</string>
+    <string name="edit_room">Edit Room</string>
+    <string name="chat_room">Chat Room</string>
+    <string name="content_description_search">search</string>
+    <string name="search">Search</string>
+    <string name="edit">Edit</string>
+    <string name="chat_room_updated_successfully">Chat Room Updated Successfully</string>
+    <string name="chat_room_updated_failed">Chat Room cannot Updated</string>
+    <string name="delete">Delete</string>
+    <string name="chat_room_deleted_successfully">Chat Room deleted successfully</string>
+    <string name="chat_room_cannot_deleted">Chat Room cannot deleted</string>
 </resources>

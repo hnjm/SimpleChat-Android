@@ -2,41 +2,42 @@ package com.kagan.chatapp.api
 
 import com.google.gson.JsonElement
 import com.kagan.chatapp.models.chatrooms.AddVM
+import com.kagan.chatapp.models.chatrooms.ChatRoomUpdateVM
 import retrofit2.Call
 import retrofit2.http.*
 import java.util.*
 
 interface ChatRoomsApi {
 
-    @GET("ChatRooms/")
+    @GET("chatrooms")
     fun getChatRooms(@Header("Authorization") auth: String,): Call<JsonElement>
 
-    @POST("ChatRooms/")
+    @POST("chatrooms")
     fun postChatRooms(
         @Header("Authorization") auth: String,
         @Body chatRoom: AddVM
     ): Call<JsonElement>
 
-    @GET("ChatRooms/{id}/users")
+    @GET("chatrooms/{id}/users")
     fun getChatRoomUsers(
         @Header("Authorization") auth: String,
         @Path("id") id: UUID
     ): Call<JsonElement>
 
-    @GET("ChatRooms/{id}/")
+    @GET("chatrooms/{id}")
     fun getChatRoom(
         @Header("Authorization") auth: String,
         @Path("id") id: UUID
     ): Call<JsonElement>
 
-    @PUT("ChatRooms/{id}/")
+    @PUT("chatrooms/{id}")
     fun putChatRoom(
         @Header("Authorization") auth: String,
         @Path("id") id: UUID,
-        @Body chatRoom: AddVM
+        @Body chatRoom: ChatRoomUpdateVM
     ): Call<JsonElement>
 
-    @DELETE("ChatRooms/{id}/")
+    @DELETE("chatrooms/{id}")
     fun deleteChatRoom(
         @Header("Authorization") auth: String,
         @Path("id") id: UUID
