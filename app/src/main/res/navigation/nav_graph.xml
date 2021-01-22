@@ -69,9 +69,24 @@
         <action
             android:id="@+id/action_chatRoomsFragment_to_createRoomFragment"
             app:destination="@id/createRoomFragment" />
+        <action
+            android:id="@+id/action_chatRoomsFragment_to_chatRoomFragment"
+            app:destination="@id/chatRoomFragment" />
     </fragment>
     <fragment
         android:id="@+id/createRoomFragment"
         android:name="com.kagan.chatapp.ui.fragments.CreateRoomFragment"
         android:label="CreateRoomFragment" />
+    <fragment
+        android:id="@+id/chatRoomFragment"
+        android:name="com.kagan.chatapp.ui.fragments.ChatRoomFragment"
+        android:label="ChatRoomFragment" >
+        <action
+            android:id="@+id/action_chatRoomFragment_to_editRoomFragment"
+            app:destination="@id/editRoomFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/editRoomFragment"
+        android:name="com.kagan.chatapp.ui.fragments.EditRoomFragment"
+        android:label="EditRoomFragment" />
 </navigation>

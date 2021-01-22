@@ -37,4 +37,8 @@
     <string name="filter_user">Filter Users</string>
     <string name="create_edit">Create/Edit</string>
     <string name="create_room">Create Room</string>
+    <string name="edit_room">Edit Room</string>
+    <string name="chat_room">Chat Room</string>
+    <string name="content_description_search">search</string>
+    <string name="search">Search</string>
 </resources>
