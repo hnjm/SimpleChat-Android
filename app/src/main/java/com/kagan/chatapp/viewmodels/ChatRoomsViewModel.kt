@@ -12,6 +12,7 @@ import com.google.gson.reflect.TypeToken
 import com.kagan.chatapp.models.APIResultVM
 import com.kagan.chatapp.models.APIResultWithRecVM
 import com.kagan.chatapp.models.chatrooms.AddVM
+import com.kagan.chatapp.models.chatrooms.ChatRoomUpdateVM
 import com.kagan.chatapp.models.chatrooms.ChatRoomVM
 import com.kagan.chatapp.repositories.ChatRoomRepository
 import com.kagan.chatapp.utils.ChatRoomsState
@@ -40,8 +41,17 @@ constructor(
     private val _chatRoomUsers = MutableLiveData<ChatRoomsState<*>>()
     val chatRoomUsers: LiveData<ChatRoomsState<*>> = _chatRoomUsers
 
-    private val _chatRoom = MutableLiveData<ChatRoomsState<*>>()
-    val chatRoom: LiveData<ChatRoomsState<*>> = _chatRoom
+    private val _chatRoom = MutableLiveData<ChatRoomsState<ChatRoomVM>>()
+    val chatRoom: LiveData<ChatRoomsState<ChatRoomVM>> = _chatRoom
+
+    private val _chatRoomFailed = MutableLiveData<ChatRoomsState<APIResultVM>>()
+    val chatRoomFailed: LiveData<ChatRoomsState<APIResultVM>> = _chatRoomFailed
+
+    private val _putState = MutableLiveData<ChatRoomsState<APIResultVM>>()
+    val putState: LiveData<ChatRoomsState<APIResultVM>> = _putState
+
+    private val _deleteState = MutableLiveData<ChatRoomsState<*>>()
+    val deleteState: LiveData<ChatRoomsState<*>> = _deleteState
 
     fun getChatRooms(auth: String) {
         _state.value = ChatRoomsState.Loading
@@ -188,18 +198,16 @@ constructor(
             override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
                 when (response.code()) {
 
-                    //todo change
                     200 -> {
                         _chatRoom.value = ChatRoomsState.Success(
                             parseJsonToVM(
                                 response.body().toString(),
-                                APIResultWithRecVM::class.java
+                                ChatRoomVM::class.java
                             )
-                            // todo i don't understand what type return
                         )
                     }
                     400 -> {
-                        _chatRoom.value = ChatRoomsState.Error(
+                        _chatRoomFailed.value = ChatRoomsState.Error(
                             parseJsonToVM(
                                 response.errorBody()?.string()!!,
                                 APIResultVM::class.java
@@ -226,8 +234,87 @@ constructor(
         })
     }
 
-    fun putChatRoom(auth: String, id: UUID, chatRooms: AddVM) {}
-    fun deleteChatRoom(auth: String, id: UUID) {}
+    fun putChatRoom(auth: String, id: UUID, chatRoom: ChatRoomUpdateVM) {
+        _putState.value = ChatRoomsState.Loading
+        val call = chatRoomsRepository.putChatRoom(auth, id, chatRoom)
+
+        call.enqueue(object : Callback<JsonElement> {
+            override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
+                when (response.code()) {
+
+                    200 -> {
+                        _putState.value = ChatRoomsState.Success(
+                            parseJsonToVM(
+                                response.body().toString(),
+                                APIResultVM::class.java
+                            )
+                        )
+                    }
+                    400 -> {
+                        _putState.value = ChatRoomsState.Error(
+                            parseJsonToVM(
+                                response.errorBody()?.string()!!,
+                                APIResultVM::class.java
+                            )
+                        )
+                    }
+                    404 -> {
+                        _putState.value = ChatRoomsState.Error(
+                            parseJsonToVM(
+                                response.errorBody()?.string()!!,
+                                APIResultVM::class.java
+                            )
+                        )
+                    }
+                    500 -> {
+                        TODO("Something happened")
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<JsonElement>, t: Throwable) {
+                TODO("Not yet implemented")
+            }
+        })
+    }
+
+    fun deleteChatRoom(auth: String, id: UUID) {
+        _deleteState.value = ChatRoomsState.Loading
+        val call = chatRoomsRepository.deleteChatRoom(auth, id)
+
+        call.enqueue(object : Callback<JsonElement> {
+            override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
+                when (response.code()) {
+                    204 -> {
+                        _deleteState.value = ChatRoomsState.Success(Any())
+                    }
+                    400 -> {
+                        _deleteState.value = ChatRoomsState.Error(
+                            parseJsonToVM(
+                                response.errorBody()?.string()!!,
+                                APIResultVM::class.java
+                            )
+                        )
+                    }
+                    404 -> {
+                        _deleteState.value = ChatRoomsState.Error(
+                            parseJsonToVM(
+                                response.errorBody()?.string()!!,
+                                APIResultVM::class.java
+                            )
+                        )
+                    }
+                    500 -> {
+                        TODO("Something happened")
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<JsonElement>, t: Throwable) {
+                TODO("Not yet implemented")
+            }
+        })
+    }
 
     private fun <T : Any> parseJsonToVM(body: String, types: Type): T {
         var parse: T? = null

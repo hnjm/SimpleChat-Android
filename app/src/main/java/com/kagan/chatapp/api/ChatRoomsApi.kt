@@ -2,6 +2,7 @@ package com.kagan.chatapp.api
 
 import com.google.gson.JsonElement
 import com.kagan.chatapp.models.chatrooms.AddVM
+import com.kagan.chatapp.models.chatrooms.ChatRoomUpdateVM
 import retrofit2.Call
 import retrofit2.http.*
 import java.util.*
@@ -33,7 +34,7 @@ interface ChatRoomsApi {
     fun putChatRoom(
         @Header("Authorization") auth: String,
         @Path("id") id: UUID,
-        @Body chatRoom: AddVM
+        @Body chatRoom: ChatRoomUpdateVM
     ): Call<JsonElement>
 
     @DELETE("chatrooms/{id}")

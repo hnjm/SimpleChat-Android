@@ -2,21 +2,26 @@ package com.kagan.chatapp.ui.fragments
 
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.View
+import androidx.core.os.bundleOf
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
-import com.kagan.chatapp.adapters.ChatRoomsAdapter
 import com.kagan.chatapp.R
+import com.kagan.chatapp.adapters.ChatRoomsAdapter
 import com.kagan.chatapp.databinding.FragmentChatRoomsBinding
 import com.kagan.chatapp.models.chatrooms.ChatRoomVM
+import com.kagan.chatapp.models.safeargs.ChatRoomId
 import com.kagan.chatapp.utils.ChatRoomsState
+import com.kagan.chatapp.utils.OnClickListener
 import com.kagan.chatapp.viewmodels.ChatRoomsViewModel
 import com.kagan.chatapp.viewmodels.TokenPreferenceViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.*
 
 @AndroidEntryPoint
-class ChatRoomsFragment : Fragment(R.layout.fragment_chat_rooms), View.OnClickListener {
+class ChatRoomsFragment : Fragment(R.layout.fragment_chat_rooms), OnClickListener {
 
     private lateinit var binding: FragmentChatRoomsBinding
     private val chatRoomsViewModel: ChatRoomsViewModel by viewModels()
@@ -80,13 +85,21 @@ class ChatRoomsFragment : Fragment(R.layout.fragment_chat_rooms), View.OnClickLi
         }
     }
 
-    override fun onClick(v: View?) {
-        navigate(R.id.action_chatRoomsFragment_to_chatRoomFragment)
+    override fun onclick(chatRoomId: UUID) {
+        // todo DI
+        val id = ChatRoomId(chatRoomId)
+        val action =
+            ChatRoomsFragmentDirections.actionChatRoomsFragmentToChatRoomFragment(id)
+        navigate(action)
     }
 
     private fun navController() = findNavController()
 
     private fun navigate(action: Int) {
+        navController().navigate(action)
+    }
+
+    private fun navigate(action: NavDirections) {
         navController().navigate(action)
     }
 }

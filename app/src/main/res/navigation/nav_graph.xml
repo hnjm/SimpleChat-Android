@@ -65,7 +65,7 @@
         android:id="@+id/chatRoomsFragment"
         android:name="com.kagan.chatapp.ui.fragments.ChatRoomsFragment"
         android:label="fragment_chat_rooms"
-        tools:layout="@layout/fragment_chat_rooms" >
+        tools:layout="@layout/fragment_chat_rooms">
         <action
             android:id="@+id/action_chatRoomsFragment_to_createRoomFragment"
             app:destination="@id/createRoomFragment" />
@@ -80,13 +80,25 @@
     <fragment
         android:id="@+id/chatRoomFragment"
         android:name="com.kagan.chatapp.ui.fragments.ChatRoomFragment"
-        android:label="ChatRoomFragment" >
+        android:label="ChatRoomFragment">
         <action
             android:id="@+id/action_chatRoomFragment_to_editRoomFragment"
             app:destination="@id/editRoomFragment" />
+        <argument
+            android:name="chatRoomId"
+            app:argType="com.kagan.chatapp.models.safeargs.ChatRoomId" />
     </fragment>
     <fragment
         android:id="@+id/editRoomFragment"
         android:name="com.kagan.chatapp.ui.fragments.EditRoomFragment"
-        android:label="EditRoomFragment" />
+        android:label="EditRoomFragment">
+        <argument
+            android:name="chatRoomId"
+            app:argType="com.kagan.chatapp.models.safeargs.ChatRoomId" />
+        <action
+            android:id="@+id/action_editRoomFragment_to_chatRoomsFragment"
+            app:destination="@id/chatRoomsFragment"
+            app:popUpTo="@+id/chatRoomsFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
 </navigation>

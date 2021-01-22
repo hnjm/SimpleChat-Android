@@ -41,4 +41,10 @@
     <string name="chat_room">Chat Room</string>
     <string name="content_description_search">search</string>
     <string name="search">Search</string>
+    <string name="edit">Edit</string>
+    <string name="chat_room_updated_successfully">Chat Room Updated Successfully</string>
+    <string name="chat_room_updated_failed">Chat Room cannot Updated</string>
+    <string name="delete">Delete</string>
+    <string name="chat_room_deleted_successfully">Chat Room deleted successfully</string>
+    <string name="chat_room_cannot_deleted">Chat Room cannot deleted</string>
 </resources>

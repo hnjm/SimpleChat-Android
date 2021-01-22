@@ -4,7 +4,9 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.kagan.chatapp.R
 import com.kagan.chatapp.databinding.FragmentChatRoomBinding
 import kotlinx.coroutines.delay
@@ -13,6 +15,7 @@ import kotlinx.coroutines.launch
 class ChatRoomFragment : Fragment(R.layout.fragment_chat_room) {
 
     private lateinit var binding: FragmentChatRoomBinding
+    private val safeArgs: ChatRoomFragmentArgs by navArgs()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -33,7 +36,9 @@ class ChatRoomFragment : Fragment(R.layout.fragment_chat_room) {
         binding.chatRoom.topAppBar.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.edit_room -> {
-                    navigate(R.id.action_chatRoomFragment_to_editRoomFragment)
+                    val action =
+                        ChatRoomFragmentDirections.actionChatRoomFragmentToEditRoomFragment(safeArgs.chatRoomId)
+                    navigate(action)
                     true
                 }
                 R.id.search -> {
@@ -57,6 +62,10 @@ class ChatRoomFragment : Fragment(R.layout.fragment_chat_room) {
     }
 
     private fun navigate(action: Int) {
+        navController().navigate(action)
+    }
+
+    private fun navigate(action: NavDirections) {
         navController().navigate(action)
     }
 

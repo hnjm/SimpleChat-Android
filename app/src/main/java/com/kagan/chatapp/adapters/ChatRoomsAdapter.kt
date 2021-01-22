@@ -5,16 +5,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.kagan.chatapp.R
 import com.kagan.chatapp.models.chatrooms.ChatRoomVM
+import com.kagan.chatapp.utils.OnClickListener
 
 class ChatRoomsAdapter
 constructor(
     private val itemList: ArrayList<ChatRoomVM>,
-    private val clickListener: View.OnClickListener
+    private val clickListener: OnClickListener
 ) :
     RecyclerView.Adapter<ChatRoomsAdapter.ViewHolder>() {
 
@@ -36,7 +36,7 @@ constructor(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.apply {
             cardViewLayout.setOnClickListener {
-                clickListener.onClick(it)
+                clickListener.onclick(itemList[position].Id)
             }
             ivUserPics.setImageResource(R.drawable.ic_baseline_android_24)
             tvUserOrTitle.text = itemList[position].Name

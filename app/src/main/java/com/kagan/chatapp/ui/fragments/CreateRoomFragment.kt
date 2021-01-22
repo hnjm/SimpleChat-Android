@@ -34,6 +34,7 @@ class CreateRoomFragment : Fragment(R.layout.fragment_create_room) {
 
     private fun init() {
         binding.createRoom.btnCreateEdit.text = getString(R.string.create)
+        binding.createRoom.topAppBar.title = getString(R.string.create)
 
         binding.createRoom.btnCreateEdit.setOnClickListener {
             hideKeyboard(requireContext(), it)
