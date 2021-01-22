@@ -65,5 +65,13 @@
         android:id="@+id/chatRoomsFragment"
         android:name="com.kagan.chatapp.ui.fragments.ChatRoomsFragment"
         android:label="fragment_chat_rooms"
-        tools:layout="@layout/fragment_chat_rooms" />
+        tools:layout="@layout/fragment_chat_rooms" >
+        <action
+            android:id="@+id/action_chatRoomsFragment_to_createRoomFragment"
+            app:destination="@id/createRoomFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/createRoomFragment"
+        android:name="com.kagan.chatapp.ui.fragments.CreateRoomFragment"
+        android:label="CreateRoomFragment" />
 </navigation>

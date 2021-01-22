@@ -10,9 +10,10 @@ import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.kagan.chatapp.models.chatrooms.AddVM
+import com.kagan.chatapp.models.chatrooms.ChatRoomVM
 
 class ChatRoomsAdapter
-constructor(private val itemList: ArrayList<AddVM>) :
+constructor(private val itemList: ArrayList<ChatRoomVM>) :
     RecyclerView.Adapter<ChatRoomsAdapter.ViewHolder>() {
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {

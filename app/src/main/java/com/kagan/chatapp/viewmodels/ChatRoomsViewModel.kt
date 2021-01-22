@@ -12,6 +12,7 @@ import com.google.gson.reflect.TypeToken
 import com.kagan.chatapp.models.APIResultVM
 import com.kagan.chatapp.models.APIResultWithRecVM
 import com.kagan.chatapp.models.chatrooms.AddVM
+import com.kagan.chatapp.models.chatrooms.ChatRoomVM
 import com.kagan.chatapp.repositories.ChatRoomRepository
 import com.kagan.chatapp.utils.ChatRoomsState
 import io.sentry.Sentry
@@ -50,9 +51,9 @@ constructor(
             override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
                 when (response.code()) {
                     200 -> {
-                        val chatRoomsType = object : TypeToken<List<AddVM>>() {}.type
+                        val chatRoomsType = object : TypeToken<List<ChatRoomVM>>() {}.type
                         _state.value = ChatRoomsState.Success(
-                            parseJsonToVM<List<AddVM>>(
+                            parseJsonToVM<List<ChatRoomVM>>(
                                 response.body().toString(),
                                 chatRoomsType
                             )
@@ -60,21 +61,17 @@ constructor(
                     }
                     400 -> {
                         _state.value = ChatRoomsState.Error(
-                            ChatRoomsState.Error(
-                                parseJsonToVM(
-                                    response.errorBody()?.string()!!,
-                                    APIResultVM::class.java
-                                )
+                            parseJsonToVM(
+                                response.errorBody()?.string()!!,
+                                APIResultVM::class.java
                             )
                         )
                     }
                     404 -> {
                         _state.value = ChatRoomsState.Error(
-                            ChatRoomsState.Error(
-                                parseJsonToVM(
-                                    response.errorBody()?.string()!!,
-                                    APIResultVM::class.java
-                                )
+                            parseJsonToVM(
+                                response.errorBody()?.string()!!,
+                                APIResultVM::class.java
                             )
                         )
                     }
@@ -232,7 +229,6 @@ constructor(
     fun putChatRoom(auth: String, id: UUID, chatRooms: AddVM) {}
     fun deleteChatRoom(auth: String, id: UUID) {}
 
-
     private fun <T : Any> parseJsonToVM(body: String, types: Type): T {
         var parse: T? = null
         try {
@@ -255,7 +251,7 @@ constructor(
         var parse: T? = null
         try {
             parse = gson.fromJson(
-                gson.toJson(body),
+                body,
                 clazz
             )
         } catch (e: JsonSyntaxException) {
