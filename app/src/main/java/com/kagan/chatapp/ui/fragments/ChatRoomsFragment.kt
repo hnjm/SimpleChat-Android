@@ -3,21 +3,17 @@ package com.kagan.chatapp.ui.fragments
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.kagan.chatapp.ChatRoomsAdapter
+import com.kagan.chatapp.adapters.ChatRoomsAdapter
 import com.kagan.chatapp.R
 import com.kagan.chatapp.databinding.FragmentChatRoomsBinding
-import com.kagan.chatapp.models.chatrooms.AddVM
 import com.kagan.chatapp.models.chatrooms.ChatRoomVM
 import com.kagan.chatapp.utils.ChatRoomsState
 import com.kagan.chatapp.viewmodels.ChatRoomsViewModel
 import com.kagan.chatapp.viewmodels.TokenPreferenceViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class ChatRoomsFragment : Fragment(R.layout.fragment_chat_rooms) {

@@ -1,6 +1,5 @@
-package com.kagan.chatapp
+package com.kagan.chatapp.adapters
 
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,7 +8,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
-import com.kagan.chatapp.models.chatrooms.AddVM
+import com.kagan.chatapp.R
 import com.kagan.chatapp.models.chatrooms.ChatRoomVM
 
 class ChatRoomsAdapter
