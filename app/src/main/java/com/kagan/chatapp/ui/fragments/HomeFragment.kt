@@ -71,7 +71,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         binding.progressBarTest.visibility = View.INVISIBLE
     }
 
-    // todo dont need
     private fun showProgressBar() {
         binding.progressBarTest.visibility = View.VISIBLE
     }
@@ -81,7 +80,9 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         binding.btnChatRooms.setOnClickListener {
             navigate(R.id.action_homeFragment_to_chatRoomsFragment)
         }
-        binding.btnUsers.setOnClickListener { }
+        binding.btnUsers.setOnClickListener {
+            navigate(R.id.action_homeFragment_to_usersListFragment)
+        }
         binding.btnSettings.setOnClickListener { }
 
         binding.btnLogout.setOnClickListener {

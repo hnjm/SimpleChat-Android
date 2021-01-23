@@ -9,11 +9,11 @@ import com.google.gson.Gson
 import com.google.gson.JsonElement
 import com.google.gson.JsonSyntaxException
 import com.google.gson.reflect.TypeToken
-import com.kagan.chatapp.models.APIResultWithRecVM
-import com.kagan.chatapp.models.UserAuthenticationVM
-import com.kagan.chatapp.models.UserUpdateVM
-import com.kagan.chatapp.models.UserVM
+import com.kagan.chatapp.models.*
 import com.kagan.chatapp.repositories.UserRepository
+import com.kagan.chatapp.utils.ParseJsonToVM
+import com.kagan.chatapp.utils.ParseJsonToVM.parseJsonToVM
+import com.kagan.chatapp.utils.States
 import com.kagan.chatapp.utils.UserEvent
 import io.sentry.Sentry
 import io.sentry.SentryLevel
@@ -21,6 +21,7 @@ import org.json.JSONException
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.lang.reflect.Type
 import java.util.*
 
 class UserViewModel @ViewModelInject
@@ -35,12 +36,61 @@ constructor(
     private val _user = MutableLiveData<APIResultWithRecVM<UserVM>>()
     val user: LiveData<APIResultWithRecVM<UserVM>> = _user
 
+    private val _usersState = MutableLiveData<States<List<UserVM>>>()
+    val usersStates: LiveData<States<List<UserVM>>> = _usersState
+
+    private val _usersStateError = MutableLiveData<States<APIResultVM>>()
+    val usersStateError: LiveData<States<APIResultVM>> = _usersStateError
+
     init {
         _isLoading.value = UserEvent.Loading
     }
 
-    fun getUsers() {
+    fun getUsers(auth: String) {
+        _usersState.value = States.Loading
+        val call = userRepository.getUsers(auth)
 
+        call.enqueue(object : Callback<JsonElement> {
+            override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
+                when (response.code()) {
+                    200 -> {
+                        val usersListType = object : TypeToken<List<UserVM>>() {}.type
+                        _usersState.value = States.Success(
+                            parseJsonToVM(
+                                response.body().toString(),
+                                usersListType,
+                                gson
+                            )
+                        )
+                    }
+                    400 -> {
+                        _usersStateError.value = States.Error(
+                            parseJsonToVM(
+                                response.errorBody()?.string()!!,
+                                APIResultVM::class.java,
+                                gson
+                            )
+                        )
+                    }
+                    404 -> {
+                        _usersStateError.value = States.Error(
+                            parseJsonToVM(
+                                response.errorBody()?.string()!!,
+                                APIResultVM::class.java,
+                                gson
+                            )
+                        )
+                    }
+                    500 -> {
+                        // todo something happened
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<JsonElement>, t: Throwable) {
+                TODO("Not yet implemented")
+            }
+        })
     }
 
     fun getUser(currentUser: UserAuthenticationVM) {
@@ -86,5 +136,4 @@ constructor(
     fun updateUser(id: UUID, user: UserUpdateVM) {
 
     }
-
 }

@@ -8,7 +8,7 @@ import androidx.navigation.fragment.findNavController
 import com.kagan.chatapp.R
 import com.kagan.chatapp.databinding.FragmentCreateRoomBinding
 import com.kagan.chatapp.models.chatrooms.AddVM
-import com.kagan.chatapp.utils.ChatRoomsState
+import com.kagan.chatapp.utils.States
 import com.kagan.chatapp.utils.ErrorCodes.getDescription
 import com.kagan.chatapp.utils.Utils.hideKeyboard
 import com.kagan.chatapp.viewmodels.ChatRoomsViewModel
@@ -61,13 +61,13 @@ class CreateRoomFragment : Fragment(R.layout.fragment_create_room) {
 
         chatRoomsViewModel.postState.observe(viewLifecycleOwner, { postState ->
             when (postState) {
-                is ChatRoomsState.Loading -> {
+                is States.Loading -> {
                     displayProgressBar(true)
                 }
-                is ChatRoomsState.Success -> {
+                is States.Success -> {
                     navigateUp()
                 }
-                is ChatRoomsState.Error -> {
+                is States.Error -> {
                     displayProgressBar(false)
                     postState.error.Errors?.forEach {
                         when (it.Field) {

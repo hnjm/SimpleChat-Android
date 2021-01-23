@@ -13,7 +13,7 @@ import com.kagan.chatapp.databinding.FragmentEditRoomBinding
 import com.kagan.chatapp.models.APIResultErrorCodeVM
 import com.kagan.chatapp.models.chatrooms.ChatRoomUpdateVM
 import com.kagan.chatapp.models.chatrooms.ChatRoomVM
-import com.kagan.chatapp.utils.ChatRoomsState
+import com.kagan.chatapp.utils.States
 import com.kagan.chatapp.utils.ErrorCodes
 import com.kagan.chatapp.utils.Utils.hideKeyboard
 import com.kagan.chatapp.viewmodels.ChatRoomsViewModel
@@ -66,10 +66,10 @@ class EditRoomFragment : Fragment(R.layout.fragment_edit_room) {
     private fun subscribe() {
         chatRoomsViewModel.chatRoom.observe(viewLifecycleOwner, { state ->
             when (state) {
-                is ChatRoomsState.Loading -> {
+                is States.Loading -> {
                     displayProgressBar(true)
                 }
-                is ChatRoomsState.Success -> {
+                is States.Success -> {
                     setEditField(state.data)
                     displayProgressBar(false)
                 }
@@ -79,7 +79,7 @@ class EditRoomFragment : Fragment(R.layout.fragment_edit_room) {
 
         chatRoomsViewModel.chatRoomFailed.observe(viewLifecycleOwner, { state ->
             when (state) {
-                is ChatRoomsState.Error -> {
+                is States.Error -> {
                     displayProgressBar(false)
                     Log.d(TAG, "subscribe: error ${state.error}")
                 }
@@ -89,14 +89,14 @@ class EditRoomFragment : Fragment(R.layout.fragment_edit_room) {
 
         chatRoomsViewModel.putState.observe(viewLifecycleOwner, { state ->
             when (state) {
-                is ChatRoomsState.Loading -> {
+                is States.Loading -> {
                     displayProgressBar(true)
                 }
-                is ChatRoomsState.Success -> {
+                is States.Success -> {
                     displayProgressBar(false)
                     displaySnackBar(R.string.chat_room_updated_successfully)
                 }
-                is ChatRoomsState.Error -> {
+                is States.Error -> {
                     displayProgressBar(false)
                     displayErrors(state.error.Errors!!)
                     displaySnackBar(R.string.chat_room_updated_failed)
@@ -107,14 +107,14 @@ class EditRoomFragment : Fragment(R.layout.fragment_edit_room) {
 
         chatRoomsViewModel.deleteState.observe(viewLifecycleOwner, { state ->
             when (state) {
-                is ChatRoomsState.Loading -> {
+                is States.Loading -> {
                     displayProgressBar(true)
                 }
-                is ChatRoomsState.Success -> {
+                is States.Success -> {
                     displaySnackBar(R.string.chat_room_deleted_successfully)
                     navigate()
                 }
-                is ChatRoomsState.Error -> {
+                is States.Error -> {
                     displayProgressBar(false)
                     displayErrors(state.error.Errors!!)
                     displaySnackBar(R.string.chat_room_deleted_successfully)
