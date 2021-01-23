@@ -44,7 +44,7 @@ class ChatRoomsFragment : Fragment(R.layout.fragment_chat_rooms), OnClickListene
         chatRoomsAdapter = ChatRoomsAdapter(chatRoomsList, this)
         binding.chatRooms.chatRoomRecyclerView.adapter = chatRoomsAdapter
 
-        binding.chatRooms.fabCreateRoom.setOnClickListener {
+        binding.fabCreateRoom.setOnClickListener {
             navigate(R.id.action_chatRoomsFragment_to_createRoomFragment)
         }
     }
@@ -79,9 +79,11 @@ class ChatRoomsFragment : Fragment(R.layout.fragment_chat_rooms), OnClickListene
         if (b) {
             binding.chatRoomsProgressBar.visibility = View.VISIBLE
             binding.chatRooms.root.visibility = View.GONE
+            binding.fabCreateRoom.visibility = View.GONE
         } else {
             binding.chatRoomsProgressBar.visibility = View.GONE
             binding.chatRooms.root.visibility = View.VISIBLE
+            binding.fabCreateRoom.visibility = View.VISIBLE
         }
     }
 
