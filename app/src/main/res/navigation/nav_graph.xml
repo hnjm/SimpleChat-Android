@@ -60,6 +60,9 @@
             app:destination="@id/loginFragment"
             app:popUpTo="@id/homeFragment"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_homeFragment_to_usersListFragment"
+            app:destination="@id/usersListFragment" />
     </fragment>
     <fragment
         android:id="@+id/chatRoomsFragment"
@@ -101,4 +104,8 @@
             app:popUpTo="@+id/chatRoomsFragment"
             app:popUpToInclusive="true" />
     </fragment>
+    <fragment
+        android:id="@+id/usersListFragment"
+        android:name="com.kagan.chatapp.ui.fragments.UsersListFragment"
+        android:label="UsersListFragment" />
 </navigation>
