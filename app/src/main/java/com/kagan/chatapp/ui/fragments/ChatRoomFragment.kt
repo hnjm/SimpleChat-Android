@@ -1,6 +1,7 @@
 package com.kagan.chatapp.ui.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -8,7 +9,9 @@ import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.kagan.chatapp.R
+import com.kagan.chatapp.adapters.MessageListAdapter
 import com.kagan.chatapp.databinding.FragmentChatRoomBinding
+import com.kagan.chatapp.models.chatrooms.MessageVM
 import com.kagan.chatapp.utils.States
 import com.kagan.chatapp.viewmodels.ChatRoomsViewModel
 import com.kagan.chatapp.viewmodels.TokenPreferenceViewModel
@@ -23,6 +26,8 @@ class ChatRoomFragment : Fragment(R.layout.fragment_chat_room) {
     private val chatRoomViewModel: ChatRoomsViewModel by viewModels()
     private val tokenPreferenceViewModel: TokenPreferenceViewModel by viewModels()
     private var auth = ""
+    private lateinit var messageAdapter: MessageListAdapter
+    private var messageList = arrayListOf<MessageVM>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -33,6 +38,8 @@ class ChatRoomFragment : Fragment(R.layout.fragment_chat_room) {
     }
 
     private fun init() {
+        messageAdapter = MessageListAdapter(requireContext(), messageList, safeArgs.chatRoomId.id.toString())
+
         binding.chatRoom.topAppBar.setNavigationOnClickListener {
             navigateUp()
         }
@@ -52,6 +59,8 @@ class ChatRoomFragment : Fragment(R.layout.fragment_chat_room) {
                 else -> false
             }
         }
+
+        binding.chatRoom.recyclerViewMessage.adapter = messageAdapter
     }
 
     private fun subscribe() {
@@ -61,8 +70,11 @@ class ChatRoomFragment : Fragment(R.layout.fragment_chat_room) {
                     displayProgressBar(true)
                 }
                 is States.Success -> {
+                    messageList.addAll(state.data.sortedBy {
+                        it.CreateDT
+                    })
+                    messageAdapter.notifyDataSetChanged()
                     displayProgressBar(false)
-
                 }
                 else -> displayProgressBar(false)
             }

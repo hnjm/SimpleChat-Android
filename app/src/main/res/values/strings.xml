@@ -49,4 +49,5 @@
     <string name="chat_room_cannot_deleted">Chat Room cannot deleted</string>
     <string name="send">Send</string>
     <string name="enter_message">Enter Message</string>
+    <string name="icon">icon</string>
 </resources>
