@@ -17,5 +17,8 @@ constructor(private val chatRoomsApi: ChatRoomsApi) {
     fun putChatRoom(auth: String, id: UUID, chatRoom: ChatRoomUpdateVM) =
         chatRoomsApi.putChatRoom("Bearer $auth", id, chatRoom)
 
+    fun getChatRoomMessages(auth: String, id: UUID) =
+        chatRoomsApi.getChatRoomMessages("Bearer $auth", id)
+
     fun deleteChatRoom(auth: String, id: UUID) = chatRoomsApi.deleteChatRoom("Bearer $auth", id)
 }

@@ -14,6 +14,7 @@ import com.kagan.chatapp.models.APIResultWithRecVM
 import com.kagan.chatapp.models.chatrooms.AddVM
 import com.kagan.chatapp.models.chatrooms.ChatRoomUpdateVM
 import com.kagan.chatapp.models.chatrooms.ChatRoomVM
+import com.kagan.chatapp.models.chatrooms.MessageVM
 import com.kagan.chatapp.repositories.ChatRoomRepository
 import com.kagan.chatapp.utils.States
 import io.sentry.Sentry
@@ -52,6 +53,9 @@ constructor(
 
     private val _deleteState = MutableLiveData<States<*>>()
     val deleteState: LiveData<States<*>> = _deleteState
+
+    private val _chatRoomMessage = MutableLiveData<States<List<MessageVM>>>()
+    val chatRoomMessage: LiveData<States<List<MessageVM>>> = _chatRoomMessage
 
     fun getChatRooms(auth: String) {
         _state.value = States.Loading
@@ -303,6 +307,41 @@ constructor(
                                 APIResultVM::class.java
                             )
                         )
+                    }
+                    500 -> {
+                        TODO("Something happened")
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<JsonElement>, t: Throwable) {
+                TODO("Not yet implemented")
+            }
+        })
+    }
+
+    fun getChatRoomMessages(auth: String, id: UUID) {
+        _chatRoomMessage.value = States.Loading
+
+        val call = chatRoomsRepository.getChatRoomMessages(auth, id)
+
+        call.enqueue(object : Callback<JsonElement> {
+            override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
+                when (response.code()) {
+                    200 -> {
+                        val messageListType = object : TypeToken<List<MessageVM>>() {}.type
+                        _chatRoomMessage.value = States.Success(
+                            parseJsonToVM(
+                                response.body().toString(),
+                                messageListType
+                            )
+                        )
+                    }
+                    400 -> {
+
+                    }
+                    404 -> {
+
                     }
                     500 -> {
                         TODO("Something happened")
