@@ -67,8 +67,10 @@ class ChatRoomsFragment : Fragment(R.layout.fragment_chat_rooms), OnClickListene
         })
 
         tokenPreferenceViewModel.accessToken.observe(viewLifecycleOwner, {
-            it?.let {
-                accessToken = it
+            it.let {
+                if (it != null) {
+                    accessToken = it
+                }
                 chatRoomsViewModel.getChatRooms(accessToken)
             }
         })
