@@ -8,14 +8,15 @@ import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.kagan.chatapp.R
+import com.kagan.chatapp.db.entities.UsersEntity
 import com.kagan.chatapp.models.UserVM
 import com.kagan.chatapp.utils.OnClickListener
 
 
 class UserListAdapter
 constructor(
-    private val itemList: ArrayList<UserVM>,
-    private val clickListener: OnClickListener
+    private val itemList: ArrayList<UsersEntity>,
+    private val clickListener: OnClickListener<String>
 ) : RecyclerView.Adapter<UserListAdapter.ViewHolder>() {
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {

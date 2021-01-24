@@ -21,6 +21,7 @@ import com.kagan.chatapp.utils.Utils.showApiFailure
 import com.kagan.chatapp.viewmodels.LoginViewModel
 import com.kagan.chatapp.viewmodels.SharedViewModel
 import com.kagan.chatapp.viewmodels.TokenPreferenceViewModel
+import com.kagan.chatapp.viewmodels.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 
@@ -33,6 +34,8 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     private val tokenPreferenceViewModel: TokenPreferenceViewModel by viewModels()
     private val loginViewModel: LoginViewModel by viewModels()
     private lateinit var sharedViewModel: SharedViewModel
+    private val userViewModel: UserViewModel by viewModels()
+    private var auth = ""
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -66,6 +69,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         tokenPreferenceViewModel.accessToken.observe(viewLifecycleOwner, { accessToken ->
             if (accessToken != null) {
                 loginViewModel.checkTokenIsValid(accessToken)
+                auth = accessToken
             } else {
                 loginViewModel.setState(UserEvent.NotValid)
             }
@@ -84,6 +88,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                 }
                 is UserEvent.Valid -> {
                     displayProgressBar(false)
+                    userViewModel.getUsers(auth)
                 }
                 is UserEvent.NotValid -> {
                     displayLayout()

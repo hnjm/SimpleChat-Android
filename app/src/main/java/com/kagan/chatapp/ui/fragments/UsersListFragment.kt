@@ -11,24 +11,28 @@ import androidx.navigation.fragment.findNavController
 import com.kagan.chatapp.R
 import com.kagan.chatapp.adapters.UserListAdapter
 import com.kagan.chatapp.databinding.FragmentUsersListBinding
+import com.kagan.chatapp.db.entities.UsersEntity
 import com.kagan.chatapp.models.UserVM
 import com.kagan.chatapp.utils.FragmentBasicFunction
 import com.kagan.chatapp.utils.OnClickListener
 import com.kagan.chatapp.utils.States
+import com.kagan.chatapp.viewmodels.DatabaseViewModel
 import com.kagan.chatapp.viewmodels.TokenPreferenceViewModel
 import com.kagan.chatapp.viewmodels.UserViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 
 @AndroidEntryPoint
-class UsersListFragment : Fragment(R.layout.fragment_users_list), OnClickListener,
+class UsersListFragment : Fragment(R.layout.fragment_users_list), OnClickListener<String>,
     FragmentBasicFunction {
 
     private lateinit var usersAdapter: UserListAdapter
     private val tokenPreferenceViewModel: TokenPreferenceViewModel by viewModels()
     private lateinit var binding: FragmentUsersListBinding
     private val usersViewModel: UserViewModel by viewModels()
-    private var usersList = arrayListOf<UserVM>()
+    private val databaseViewModel: DatabaseViewModel by viewModels()
+    private var usersList = arrayListOf<UsersEntity>()
+    private var usersListDao = arrayListOf<UserVM>()
     private var auth = ""
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -50,7 +54,7 @@ class UsersListFragment : Fragment(R.layout.fragment_users_list), OnClickListene
     }
 
     private fun subscribe() {
-        usersViewModel.usersStates.observe(viewLifecycleOwner, { state ->
+        databaseViewModel.usersStates.observe(viewLifecycleOwner, { state ->
             when (state) {
                 is States.Loading -> {
                     displayProgressBar(true)
@@ -64,31 +68,26 @@ class UsersListFragment : Fragment(R.layout.fragment_users_list), OnClickListene
             }
         })
 
-        usersViewModel.usersStateError.observe(viewLifecycleOwner, { state ->
-            when (state) {
-                is States.Loading -> {
-                    displayProgressBar(true)
-                }
-                is States.Success -> {
-                    displayProgressBar(false)
-                }
-                is States.Error -> {
-                    displayProgressBar(true)
-                }
-            }
-        })
-
         tokenPreferenceViewModel.accessToken.observe(viewLifecycleOwner, { accessToken ->
             accessToken?.let {
                 auth = it
-                usersViewModel.getUsers(auth)
+                databaseViewModel.getUsers()
+            }
+        })
+
+        usersViewModel.usersStates.observe(viewLifecycleOwner, { state ->
+            when (state) {
+                is States.Success -> {
+                    usersListDao.addAll(state.data)
+
+                }
+                else -> displayProgressBar(false)
             }
         })
     }
 
-
-    override fun onclick(id: UUID) {
-        Toast.makeText(context, "$id", Toast.LENGTH_SHORT).show()
+    override fun onclick(id: String) {
+        Toast.makeText(context, id, Toast.LENGTH_SHORT).show()
     }
 
     override fun navController(): NavController {

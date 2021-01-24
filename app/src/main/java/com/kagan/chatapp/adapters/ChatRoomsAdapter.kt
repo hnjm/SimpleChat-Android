@@ -10,11 +10,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.kagan.chatapp.R
 import com.kagan.chatapp.models.chatrooms.ChatRoomVM
 import com.kagan.chatapp.utils.OnClickListener
+import java.util.*
 
 class ChatRoomsAdapter
 constructor(
     private val itemList: ArrayList<ChatRoomVM>,
-    private val clickListener: OnClickListener
+    private val clickListener: OnClickListener<UUID>
 ) :
     RecyclerView.Adapter<ChatRoomsAdapter.ViewHolder>() {
 

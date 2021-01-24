@@ -20,7 +20,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 
 @AndroidEntryPoint
-class ChatRoomsFragment : Fragment(R.layout.fragment_chat_rooms), OnClickListener {
+class ChatRoomsFragment : Fragment(R.layout.fragment_chat_rooms), OnClickListener<UUID> {
 
     private lateinit var binding: FragmentChatRoomsBinding
     private val chatRoomsViewModel: ChatRoomsViewModel by viewModels()
