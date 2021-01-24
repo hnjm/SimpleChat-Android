@@ -8,16 +8,16 @@ import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.kagan.chatapp.R
-import com.kagan.chatapp.models.chatrooms.ChatRoomVM
+import com.kagan.chatapp.db.entities.UsersEntity
+import com.kagan.chatapp.models.UserVM
 import com.kagan.chatapp.utils.OnClickListener
-import java.util.*
 
-class ChatRoomsAdapter
+
+class UserListAdapter
 constructor(
-    private val itemList: ArrayList<ChatRoomVM>,
-    private val clickListener: OnClickListener<UUID>
-) :
-    RecyclerView.Adapter<ChatRoomsAdapter.ViewHolder>() {
+    private val itemList: ArrayList<UsersEntity>,
+    private val clickListener: OnClickListener<String>
+) : RecyclerView.Adapter<UserListAdapter.ViewHolder>() {
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val cardViewLayout: CardView = view.findViewById<CardView>(R.id.cvLayout)
@@ -40,8 +40,8 @@ constructor(
                 clickListener.onclick(itemList[position].Id)
             }
             ivUserPics.setImageResource(R.drawable.ic_baseline_android_24)
-            tvUserOrTitle.text = itemList[position].Name
-            tvDesc.text = itemList[position].Description
+            tvUserOrTitle.text = itemList[position].DisplayName
+//            tvDesc.text = itemList[position]
         }
     }
 

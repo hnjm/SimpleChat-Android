@@ -8,7 +8,7 @@ import java.util.*
 
 interface UserApi {
 
-    @GET("users/")
+    @GET("users")
     fun getUsers(@Header("Authorization") accessToken: String): Call<JsonElement>
 
     @GET("users/{id}")

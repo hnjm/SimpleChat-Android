@@ -15,7 +15,7 @@ import com.kagan.chatapp.models.chatrooms.AddVM
 import com.kagan.chatapp.models.chatrooms.ChatRoomUpdateVM
 import com.kagan.chatapp.models.chatrooms.ChatRoomVM
 import com.kagan.chatapp.repositories.ChatRoomRepository
-import com.kagan.chatapp.utils.ChatRoomsState
+import com.kagan.chatapp.utils.States
 import io.sentry.Sentry
 import io.sentry.SentryLevel
 import org.json.JSONException
@@ -32,29 +32,29 @@ constructor(
     private val gson: Gson
 ) : ViewModel() {
 
-    private val _state = MutableLiveData<ChatRoomsState<*>>()
-    val state: LiveData<ChatRoomsState<*>> = _state
+    private val _state = MutableLiveData<States<*>>()
+    val state: LiveData<States<*>> = _state
 
-    private val _postState = MutableLiveData<ChatRoomsState<*>>()
-    val postState: LiveData<ChatRoomsState<*>> = _postState
+    private val _postState = MutableLiveData<States<*>>()
+    val postState: LiveData<States<*>> = _postState
 
-    private val _chatRoomUsers = MutableLiveData<ChatRoomsState<*>>()
-    val chatRoomUsers: LiveData<ChatRoomsState<*>> = _chatRoomUsers
+    private val _chatRoomUsers = MutableLiveData<States<*>>()
+    val chatRoomUsers: LiveData<States<*>> = _chatRoomUsers
 
-    private val _chatRoom = MutableLiveData<ChatRoomsState<ChatRoomVM>>()
-    val chatRoom: LiveData<ChatRoomsState<ChatRoomVM>> = _chatRoom
+    private val _chatRoom = MutableLiveData<States<ChatRoomVM>>()
+    val chatRoom: LiveData<States<ChatRoomVM>> = _chatRoom
 
-    private val _chatRoomFailed = MutableLiveData<ChatRoomsState<APIResultVM>>()
-    val chatRoomFailed: LiveData<ChatRoomsState<APIResultVM>> = _chatRoomFailed
+    private val _chatRoomFailed = MutableLiveData<States<APIResultVM>>()
+    val chatRoomFailed: LiveData<States<APIResultVM>> = _chatRoomFailed
 
-    private val _putState = MutableLiveData<ChatRoomsState<APIResultVM>>()
-    val putState: LiveData<ChatRoomsState<APIResultVM>> = _putState
+    private val _putState = MutableLiveData<States<APIResultVM>>()
+    val putState: LiveData<States<APIResultVM>> = _putState
 
-    private val _deleteState = MutableLiveData<ChatRoomsState<*>>()
-    val deleteState: LiveData<ChatRoomsState<*>> = _deleteState
+    private val _deleteState = MutableLiveData<States<*>>()
+    val deleteState: LiveData<States<*>> = _deleteState
 
     fun getChatRooms(auth: String) {
-        _state.value = ChatRoomsState.Loading
+        _state.value = States.Loading
         val call = chatRoomsRepository.getChatRooms(auth)
 
         call.enqueue(object : Callback<JsonElement> {
@@ -62,7 +62,7 @@ constructor(
                 when (response.code()) {
                     200 -> {
                         val chatRoomsType = object : TypeToken<List<ChatRoomVM>>() {}.type
-                        _state.value = ChatRoomsState.Success(
+                        _state.value = States.Success(
                             parseJsonToVM<List<ChatRoomVM>>(
                                 response.body().toString(),
                                 chatRoomsType
@@ -70,7 +70,7 @@ constructor(
                         )
                     }
                     400 -> {
-                        _state.value = ChatRoomsState.Error(
+                        _state.value = States.Error(
                             parseJsonToVM(
                                 response.errorBody()?.string()!!,
                                 APIResultVM::class.java
@@ -78,7 +78,7 @@ constructor(
                         )
                     }
                     404 -> {
-                        _state.value = ChatRoomsState.Error(
+                        _state.value = States.Error(
                             parseJsonToVM(
                                 response.errorBody()?.string()!!,
                                 APIResultVM::class.java
@@ -99,7 +99,7 @@ constructor(
     }
 
     fun postChatRooms(auth: String, chatRooms: AddVM) {
-        _postState.value = ChatRoomsState.Loading
+        _postState.value = States.Loading
 
         val call = chatRoomsRepository.postChatRooms(auth, chatRooms)
 
@@ -107,7 +107,7 @@ constructor(
             override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
                 when (response.code()) {
                     200 -> {
-                        _postState.value = ChatRoomsState.Success(
+                        _postState.value = States.Success(
                             parseJsonToVM(
                                 response.body().toString(),
                                 APIResultVM::class.java
@@ -116,7 +116,7 @@ constructor(
                     }
                     400 -> {
                         _postState.value =
-                            ChatRoomsState.Error(
+                            States.Error(
                                 parseJsonToVM(
                                     response.errorBody()?.string()!!,
                                     APIResultVM::class.java
@@ -125,7 +125,7 @@ constructor(
                     }
                     404 -> {
                         _postState.value =
-                            ChatRoomsState.Error(
+                            States.Error(
                                 parseJsonToVM(
                                     response.errorBody()?.string()!!,
                                     APIResultVM::class.java
@@ -145,7 +145,7 @@ constructor(
     }
 
     fun getChatRoomUsers(auth: String, id: UUID) {
-        _chatRoomUsers.value = ChatRoomsState.Loading
+        _chatRoomUsers.value = States.Loading
 
         val call = chatRoomsRepository.getChatRoomUsers(auth, id)
 
@@ -153,7 +153,7 @@ constructor(
             override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
                 when (response.code()) {
                     200 -> {
-                        _chatRoomUsers.value = ChatRoomsState.Success(
+                        _chatRoomUsers.value = States.Success(
                             parseJsonToVM(
                                 response.body().toString(),
                                 APIResultWithRecVM::class.java
@@ -162,7 +162,7 @@ constructor(
                         )
                     }
                     400 -> {
-                        _chatRoomUsers.value = ChatRoomsState.Error(
+                        _chatRoomUsers.value = States.Error(
                             parseJsonToVM(
                                 response.errorBody()?.string()!!,
                                 APIResultVM::class.java
@@ -170,7 +170,7 @@ constructor(
                         )
                     }
                     404 -> {
-                        _chatRoomUsers.value = ChatRoomsState.Error(
+                        _chatRoomUsers.value = States.Error(
                             parseJsonToVM(
                                 response.errorBody()?.string()!!,
                                 APIResultVM::class.java
@@ -190,7 +190,7 @@ constructor(
     }
 
     fun getChatRoom(auth: String, id: UUID) {
-        _chatRoom.value = ChatRoomsState.Loading
+        _chatRoom.value = States.Loading
 
         val call = chatRoomsRepository.getChatRoom(auth, id)
 
@@ -199,7 +199,7 @@ constructor(
                 when (response.code()) {
 
                     200 -> {
-                        _chatRoom.value = ChatRoomsState.Success(
+                        _chatRoom.value = States.Success(
                             parseJsonToVM(
                                 response.body().toString(),
                                 ChatRoomVM::class.java
@@ -207,7 +207,7 @@ constructor(
                         )
                     }
                     400 -> {
-                        _chatRoomFailed.value = ChatRoomsState.Error(
+                        _chatRoomFailed.value = States.Error(
                             parseJsonToVM(
                                 response.errorBody()?.string()!!,
                                 APIResultVM::class.java
@@ -215,7 +215,7 @@ constructor(
                         )
                     }
                     404 -> {
-                        _chatRoomUsers.value = ChatRoomsState.Error(
+                        _chatRoomUsers.value = States.Error(
                             parseJsonToVM(
                                 response.errorBody()?.string()!!,
                                 APIResultVM::class.java
@@ -235,7 +235,7 @@ constructor(
     }
 
     fun putChatRoom(auth: String, id: UUID, chatRoom: ChatRoomUpdateVM) {
-        _putState.value = ChatRoomsState.Loading
+        _putState.value = States.Loading
         val call = chatRoomsRepository.putChatRoom(auth, id, chatRoom)
 
         call.enqueue(object : Callback<JsonElement> {
@@ -243,7 +243,7 @@ constructor(
                 when (response.code()) {
 
                     200 -> {
-                        _putState.value = ChatRoomsState.Success(
+                        _putState.value = States.Success(
                             parseJsonToVM(
                                 response.body().toString(),
                                 APIResultVM::class.java
@@ -251,7 +251,7 @@ constructor(
                         )
                     }
                     400 -> {
-                        _putState.value = ChatRoomsState.Error(
+                        _putState.value = States.Error(
                             parseJsonToVM(
                                 response.errorBody()?.string()!!,
                                 APIResultVM::class.java
@@ -259,7 +259,7 @@ constructor(
                         )
                     }
                     404 -> {
-                        _putState.value = ChatRoomsState.Error(
+                        _putState.value = States.Error(
                             parseJsonToVM(
                                 response.errorBody()?.string()!!,
                                 APIResultVM::class.java
@@ -279,17 +279,17 @@ constructor(
     }
 
     fun deleteChatRoom(auth: String, id: UUID) {
-        _deleteState.value = ChatRoomsState.Loading
+        _deleteState.value = States.Loading
         val call = chatRoomsRepository.deleteChatRoom(auth, id)
 
         call.enqueue(object : Callback<JsonElement> {
             override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
                 when (response.code()) {
                     204 -> {
-                        _deleteState.value = ChatRoomsState.Success(Any())
+                        _deleteState.value = States.Success(Any())
                     }
                     400 -> {
-                        _deleteState.value = ChatRoomsState.Error(
+                        _deleteState.value = States.Error(
                             parseJsonToVM(
                                 response.errorBody()?.string()!!,
                                 APIResultVM::class.java
@@ -297,7 +297,7 @@ constructor(
                         )
                     }
                     404 -> {
-                        _deleteState.value = ChatRoomsState.Error(
+                        _deleteState.value = States.Error(
                             parseJsonToVM(
                                 response.errorBody()?.string()!!,
                                 APIResultVM::class.java

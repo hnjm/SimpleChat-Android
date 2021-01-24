@@ -3,7 +3,6 @@ package com.kagan.chatapp.ui.fragments
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavDirections
@@ -13,7 +12,7 @@ import com.kagan.chatapp.adapters.ChatRoomsAdapter
 import com.kagan.chatapp.databinding.FragmentChatRoomsBinding
 import com.kagan.chatapp.models.chatrooms.ChatRoomVM
 import com.kagan.chatapp.models.safeargs.ChatRoomId
-import com.kagan.chatapp.utils.ChatRoomsState
+import com.kagan.chatapp.utils.States
 import com.kagan.chatapp.utils.OnClickListener
 import com.kagan.chatapp.viewmodels.ChatRoomsViewModel
 import com.kagan.chatapp.viewmodels.TokenPreferenceViewModel
@@ -21,7 +20,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 
 @AndroidEntryPoint
-class ChatRoomsFragment : Fragment(R.layout.fragment_chat_rooms), OnClickListener {
+class ChatRoomsFragment : Fragment(R.layout.fragment_chat_rooms), OnClickListener<UUID> {
 
     private lateinit var binding: FragmentChatRoomsBinding
     private val chatRoomsViewModel: ChatRoomsViewModel by viewModels()
@@ -40,11 +39,11 @@ class ChatRoomsFragment : Fragment(R.layout.fragment_chat_rooms), OnClickListene
     }
 
     private fun init() {
-        // todo will learn how to pass args with dagger2
+        binding.chatRooms.topAppBar.title = getString(R.string.chat_rooms)
         chatRoomsAdapter = ChatRoomsAdapter(chatRoomsList, this)
         binding.chatRooms.chatRoomRecyclerView.adapter = chatRoomsAdapter
 
-        binding.chatRooms.fabCreateRoom.setOnClickListener {
+        binding.fabCreateRoom.setOnClickListener {
             navigate(R.id.action_chatRoomsFragment_to_createRoomFragment)
         }
     }
@@ -52,15 +51,15 @@ class ChatRoomsFragment : Fragment(R.layout.fragment_chat_rooms), OnClickListene
     private fun subscribe() {
         chatRoomsViewModel.state.observe(viewLifecycleOwner, { state ->
             when (state) {
-                is ChatRoomsState.Loading -> {
+                is States.Loading -> {
                     displayProgressBar(true)
                 }
-                is ChatRoomsState.Success -> {
+                is States.Success -> {
                     displayProgressBar(false)
                     chatRoomsList.addAll(state.data as List<ChatRoomVM>)
                     chatRoomsAdapter.notifyDataSetChanged()
                 }
-                is ChatRoomsState.Error -> {
+                is States.Error -> {
                     displayProgressBar(false)
                     Log.d(TAG, "Error data:${state.error}")
                 }
@@ -68,8 +67,10 @@ class ChatRoomsFragment : Fragment(R.layout.fragment_chat_rooms), OnClickListene
         })
 
         tokenPreferenceViewModel.accessToken.observe(viewLifecycleOwner, {
-            it?.let {
-                accessToken = it
+            it.let {
+                if (it != null) {
+                    accessToken = it
+                }
                 chatRoomsViewModel.getChatRooms(accessToken)
             }
         })
@@ -79,15 +80,17 @@ class ChatRoomsFragment : Fragment(R.layout.fragment_chat_rooms), OnClickListene
         if (b) {
             binding.chatRoomsProgressBar.visibility = View.VISIBLE
             binding.chatRooms.root.visibility = View.GONE
+            binding.fabCreateRoom.visibility = View.GONE
         } else {
             binding.chatRoomsProgressBar.visibility = View.GONE
             binding.chatRooms.root.visibility = View.VISIBLE
+            binding.fabCreateRoom.visibility = View.VISIBLE
         }
     }
 
-    override fun onclick(chatRoomId: UUID) {
+    override fun onclick(id: UUID) {
         // todo DI
-        val id = ChatRoomId(chatRoomId)
+        val id = ChatRoomId(id)
         val action =
             ChatRoomsFragmentDirections.actionChatRoomsFragmentToChatRoomFragment(id)
         navigate(action)

@@ -1,7 +1,5 @@
 package com.kagan.chatapp.utils
 
-import java.util.*
-
-interface OnClickListener {
-    fun onclick(chatRoomId: UUID)
+interface OnClickListener<Type> {
+    fun onclick(id: Type)
 }
