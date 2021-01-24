@@ -47,4 +47,6 @@
     <string name="delete">Delete</string>
     <string name="chat_room_deleted_successfully">Chat Room deleted successfully</string>
     <string name="chat_room_cannot_deleted">Chat Room cannot deleted</string>
+    <string name="send">Send</string>
+    <string name="enter_message">Enter Message</string>
 </resources>
