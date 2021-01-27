@@ -1,6 +1,7 @@
 package com.kagan.chatapp.di
 
 import android.content.Context
+import com.kagan.chatapp.datastore.CurrentUserPreference
 import com.kagan.chatapp.datastore.TokenPreference
 import dagger.Module
 import dagger.Provides
@@ -18,4 +19,9 @@ object DataStoreModule {
     @Provides
     fun provideTokenPreference(@ApplicationContext context: Context): TokenPreference =
         TokenPreference(context)
+
+    @Singleton
+    @Provides
+    fun provideCurrentUserPreference(@ApplicationContext context: Context): CurrentUserPreference =
+        CurrentUserPreference(context)
 }

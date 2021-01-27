@@ -4,8 +4,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.commit
-import androidx.fragment.app.replace
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -18,10 +16,7 @@ import com.kagan.chatapp.utils.ErrorCodes
 import com.kagan.chatapp.utils.UserEvent
 import com.kagan.chatapp.utils.Utils.hideKeyboard
 import com.kagan.chatapp.utils.Utils.showApiFailure
-import com.kagan.chatapp.viewmodels.LoginViewModel
-import com.kagan.chatapp.viewmodels.SharedViewModel
-import com.kagan.chatapp.viewmodels.TokenPreferenceViewModel
-import com.kagan.chatapp.viewmodels.UserViewModel
+import com.kagan.chatapp.viewmodels.*
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 
@@ -32,6 +27,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
     private lateinit var binding: FragmentLoginBinding
     private val tokenPreferenceViewModel: TokenPreferenceViewModel by viewModels()
+    private val userPreferenceViewModel: CurrentUserViewModel by viewModels()
     private val loginViewModel: LoginViewModel by viewModels()
     private lateinit var sharedViewModel: SharedViewModel
     private val userViewModel: UserViewModel by viewModels()
@@ -103,6 +99,18 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
             tokenPreferenceViewModel.storeAccessToken(loginResult.TokenData.AccessToken)
             tokenPreferenceViewModel.storeRefreshToken(loginResult.TokenData.RefreshToken)
+            var about = ""
+            if (loginResult.About != null) {
+                about = loginResult.About
+            }
+            userPreferenceViewModel.storeUser(
+                username = loginResult.UserName,
+                displayName = loginResult.DisplayName,
+                about = about,
+                accessToken = loginResult.TokenData.AccessToken,
+                refreshToken = loginResult.TokenData.RefreshToken,
+                id = loginResult.Id.toString()
+            )
 
             sharedViewModel.postValue(loginResult)
             loginViewModel.clearResult()

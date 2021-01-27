@@ -56,6 +56,7 @@ class ChatRoomsFragment : Fragment(R.layout.fragment_chat_rooms), OnClickListene
                 }
                 is States.Success -> {
                     displayProgressBar(false)
+                    chatRoomsList.clear()
                     chatRoomsList.addAll(state.data as List<ChatRoomVM>)
                     chatRoomsAdapter.notifyDataSetChanged()
                 }

@@ -10,7 +10,7 @@ import java.util.*
 interface ChatRoomsApi {
 
     @GET("chatrooms")
-    fun getChatRooms(@Header("Authorization") auth: String,): Call<JsonElement>
+    fun getChatRooms(@Header("Authorization") auth: String): Call<JsonElement>
 
     @POST("chatrooms")
     fun postChatRooms(
@@ -26,6 +26,12 @@ interface ChatRoomsApi {
 
     @GET("chatrooms/{id}")
     fun getChatRoom(
+        @Header("Authorization") auth: String,
+        @Path("id") id: UUID
+    ): Call<JsonElement>
+
+    @GET("chatrooms/{id}/messages")
+    fun getChatRoomMessages(
         @Header("Authorization") auth: String,
         @Path("id") id: UUID
     ): Call<JsonElement>
