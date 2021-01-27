@@ -77,6 +77,7 @@ class ChatRoomFragment : Fragment(R.layout.fragment_chat_room) {
                     messageList.addAll(state.data.sortedBy {
                         it.CreateDT
                     })
+                    binding.chatRoom.recyclerViewMessage.scrollToPosition(messageList.size - 1)
                     messageAdapter.notifyDataSetChanged()
                     displayProgressBar(false)
                 }
