@@ -13,12 +13,12 @@ constructor(
     private val userPreference: CurrentUserPreference
 ) : ViewModel() {
 
-    private val username = userPreference.userNameFlow.asLiveData()
-    private val displayName = userPreference.displayNameFlow.asLiveData()
-    private val about = userPreference.aboutFlow.asLiveData()
-    private val accessToken = userPreference.accessTokenFlow.asLiveData()
-    private val refreshToken = userPreference.refreshTokenFlow.asLiveData()
-    private val id = userPreference.idFlow.asLiveData()
+    val usernameStore = userPreference.userNameFlow.asLiveData()
+    val displayNameStore = userPreference.displayNameFlow.asLiveData()
+    val aboutStore = userPreference.aboutFlow.asLiveData()
+    val accessTokenStore = userPreference.accessTokenFlow.asLiveData()
+    val refreshTokenStore = userPreference.refreshTokenFlow.asLiveData()
+    val idStore = userPreference.idFlow.asLiveData()
 
     fun storeUser(
         username: String,

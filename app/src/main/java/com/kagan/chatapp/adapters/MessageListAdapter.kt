@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.kagan.chatapp.R
+import com.kagan.chatapp.db.entities.UsersEntity
 import com.kagan.chatapp.models.chatrooms.MessageVM
 import java.util.*
 
@@ -14,7 +15,8 @@ class MessageListAdapter
 constructor(
     private val context: Context,
     private val messageList: List<MessageVM>,
-    private val currentUser: String
+    private val currentId: String,
+    private val userList: List<UsersEntity>,
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val VIEW_TYPE_MESSAGE_SENT = 1
     private val VIEW_TYPE_MESSAGE_RECEIVED = 2
@@ -29,8 +31,7 @@ constructor(
             SentMessageHolder(view)
         } else {
             view = LayoutInflater.from(context).inflate(R.layout.item_chat_other, parent, false)
-            ReceivedMessageHolder(view)
-
+            ReceivedMessageHolder(view, userList)
         }
     }
 
@@ -42,7 +43,7 @@ constructor(
                 SentMessageHolder(holder.itemView).bind(message)
             }
             VIEW_TYPE_MESSAGE_RECEIVED -> {
-                ReceivedMessageHolder(holder.itemView).bind(message)
+                ReceivedMessageHolder(holder.itemView, userList).bind(message)
             }
         }
     }
@@ -52,7 +53,7 @@ constructor(
     override fun getItemViewType(position: Int): Int {
         val message = messageList[position]
 
-        return if (message.CreateBy.toString().equals("810da6fd-fd25-4042-bd56-89913581af47")) {
+        return if (message.CreateBy.toString() == currentId) {
             VIEW_TYPE_MESSAGE_SENT
         } else {
             VIEW_TYPE_MESSAGE_RECEIVED
