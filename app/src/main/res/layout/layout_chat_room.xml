@@ -35,7 +35,7 @@
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             tools:itemCount="11"
-            tools:listitem="@layout/item_chat_other" />
+            tools:listitem="@layout/item_chat_me" />
 
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
