@@ -89,6 +89,11 @@ dependencies {
     implementation "androidx.room:room-runtime:$room_version"
     implementation "androidx.room:room-ktx:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
+
+    // SignalR
+//    implementation 'com.smartarmenia:dotnetcoresignalrclientjava:1.14'
+    implementation "com.microsoft.signalr:signalr:3.1.9"
+
 }
 
 kapt {

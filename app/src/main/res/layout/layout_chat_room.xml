@@ -57,6 +57,7 @@
         android:id="@+id/btnSend"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
+        android:enabled="false"
         android:text="@string/send"
         app:layout_constraintBottom_toBottomOf="@id/evMessage"
         app:layout_constraintEnd_toEndOf="parent"

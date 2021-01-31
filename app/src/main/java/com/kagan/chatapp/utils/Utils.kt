@@ -5,6 +5,8 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import com.google.android.material.snackbar.Snackbar
 import com.kagan.chatapp.R
+import io.sentry.Sentry
+import java.lang.NullPointerException
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -27,17 +29,31 @@ object Utils {
 
     fun formatTime(date: String, context: Context): String? {
         val dateObject = mapToDate(date)
-        return if (is24HourFormat(context)) {
-            SimpleDateFormat("H:mm", Locale.UK).format(dateObject!!)
-        } else {
-            SimpleDateFormat("h:mm a", Locale.UK).format(dateObject!!)
+        try {
+
+            return if (is24HourFormat(context)) {
+                SimpleDateFormat("H:mm", Locale.UK).format(dateObject!!)
+            } else {
+                SimpleDateFormat("h:mm a", Locale.UK).format(dateObject!!)
+            }
+        } catch (e: NullPointerException) {
+            Sentry.captureException(e)
         }
+        return null
     }
 
     fun formatDate(date: String): String? {
         val dateObject = mapToDate(date)
-        return SimpleDateFormat("EEE, MMM d", Locale.UK).format(dateObject!!)
+        try {
+            return SimpleDateFormat("EEE, MMM d", Locale.UK).format(dateObject!!)
+        } catch (e: NullPointerException) {
+            Sentry.captureException(e)
+        }
+        return null
     }
+
+    fun getCurrentTime(): String =
+        SimpleDateFormat("y-M-d'T'k:m:s", Locale.UK).format(Calendar.getInstance().time)
 
     private fun is24HourFormat(context: Context): Boolean =
         android.text.format.DateFormat.is24HourFormat(context)
