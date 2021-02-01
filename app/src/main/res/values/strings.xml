@@ -50,6 +50,8 @@
     <string name="send">Send</string>
     <string name="enter_message">Enter Message</string>
     <string name="icon">icon</string>
+    <string name="cannot_find_user">Cannot find user.</string>
+    <string name="join_room">%s joined the room</string>
     <string name="channel_name">Receive Message</string>
     <string name="channel_description">Receving Message from another person</string>
 </resources>

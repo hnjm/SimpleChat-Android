@@ -8,5 +8,5 @@ data class MessageVM(
     val CreateDT: String,
     val UpdateDT: String? = null,
     val CreateBy: UUID,
-    val UpdateBy: UUID
+    val UpdateBy: UUID? = null
 )
