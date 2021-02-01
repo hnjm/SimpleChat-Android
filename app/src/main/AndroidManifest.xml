@@ -29,6 +29,7 @@
             android:name=".ui.activities.LoginActivity"
             android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"
             android:windowSoftInputMode="stateHidden|adjustResize" />
+        <receiver android:name=".services.PushNotificationService"/>
 
         <meta-data
             android:name="io.sentry.dsn"
