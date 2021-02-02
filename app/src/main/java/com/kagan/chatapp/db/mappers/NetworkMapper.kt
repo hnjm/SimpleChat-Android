@@ -11,9 +11,9 @@ constructor() : EntityMapper<UsersEntity, UserVM> {
 
     override fun mapToEntity(dao: UserVM): UsersEntity {
         return UsersEntity(
-            dao.Id.toString(),
-            dao.UserName,
-            dao.DisplayName
+            dao.id.toString(),
+            dao.userName,
+            dao.displayName
         )
     }
 

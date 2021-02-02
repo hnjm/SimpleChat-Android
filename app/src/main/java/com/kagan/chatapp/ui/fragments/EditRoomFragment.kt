@@ -98,7 +98,7 @@ class EditRoomFragment : Fragment(R.layout.fragment_edit_room) {
                 }
                 is States.Error -> {
                     displayProgressBar(false)
-                    displayErrors(state.error.Errors!!)
+                    displayErrors(state.error.errors!!)
                     displaySnackBar(R.string.chat_room_updated_failed)
                 }
                 else -> displayProgressBar(false)
@@ -116,7 +116,7 @@ class EditRoomFragment : Fragment(R.layout.fragment_edit_room) {
                 }
                 is States.Error -> {
                     displayProgressBar(false)
-                    displayErrors(state.error.Errors!!)
+                    displayErrors(state.error.errors!!)
                     displaySnackBar(R.string.chat_room_deleted_successfully)
                 }
                 else -> displayProgressBar(false)
@@ -132,11 +132,11 @@ class EditRoomFragment : Fragment(R.layout.fragment_edit_room) {
     }
 
     private fun setEditField(data: ChatRoomVM) {
-        binding.editRoom.evName.hint = data.Name
-        binding.editRoom.evDescription.hint = data.Description
-        binding.editRoom.switchPrivate.isChecked = data.IsPrivate
+        binding.editRoom.evName.hint = data.name
+        binding.editRoom.evDescription.hint = data.description
+        binding.editRoom.switchPrivate.isChecked = data.isPrivate
 
-        users = data.Users
+        users = data.users
     }
 
     private fun getEditField(): ChatRoomUpdateVM {
@@ -146,12 +146,12 @@ class EditRoomFragment : Fragment(R.layout.fragment_edit_room) {
 
         // todo DI
         return ChatRoomUpdateVM(
-            Name = name,
-            IsMain = false,
-            IsPrivate = isPrivate,
-            Description = description,
-            IsOneToOneChat = false,
-            Users = users
+            name = name,
+            isMain = false,
+            isPrivate = isPrivate,
+            description = description,
+            isOneToOneChat = false,
+            users = users
         )
     }
 
@@ -167,13 +167,13 @@ class EditRoomFragment : Fragment(R.layout.fragment_edit_room) {
 
     private fun displayErrors(errors: List<APIResultErrorCodeVM>) {
         errors.forEach {
-            when (it.Field) {
+            when (it.field) {
                 "General" -> {
                     displaySnackBar(R.string.chat_room_cannot_deleted)
                 }
                 "Name" -> {
                     binding.editRoom.evName.error =
-                        ErrorCodes.getDescription(it.ErrorCode, requireContext())
+                        ErrorCodes.getDescription(it.errorCode, requireContext())
                 }
             }
         }

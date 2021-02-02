@@ -3,9 +3,9 @@ package com.kagan.chatapp.models
 import java.util.*
 
 data class UserVM(
-    override val Id: UUID,
-    val UserName: String,
-    val IsAccountLocked: Boolean,
-    val DisplayName: String,
-    val About: String
+    override val id: UUID,
+    val userName: String,
+    val isAccountLocked: Boolean,
+    val displayName: String,
+    val about: String
 ) : BaseVM()

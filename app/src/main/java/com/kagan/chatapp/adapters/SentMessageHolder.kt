@@ -30,9 +30,9 @@ constructor(
 
     fun bind(sent: MessageVM) {
         sent.apply {
-            textChatDateMe?.text = formatDate(CreateDT)
-            textChatMessageMe?.text = Text
-            textChatTimestampMe?.text = formatTime(CreateDT)
+            textChatDateMe?.text = formatDate(createDT)
+            textChatMessageMe?.text = text
+            textChatTimestampMe?.text = formatTime(createDT)
         }
     }
 }

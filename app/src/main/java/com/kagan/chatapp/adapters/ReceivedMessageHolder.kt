@@ -36,10 +36,10 @@ constructor(view: View, private val userList: List<UsersEntity>) : RecyclerView.
 
     fun bind(received: MessageVM) {
         received.apply {
-            textChatDateOther?.text = formatDate(CreateDT)
-            textChatUserOther?.text = findUserName(CreateBy)
-            textChatMessageOther?.text = Text
-            textChatTimestampOther?.text = formatTime(CreateDT)
+            textChatDateOther?.text = formatDate(createDT)
+            textChatUserOther?.text = findUserName(createBy)
+            textChatMessageOther?.text = text
+            textChatTimestampOther?.text = formatTime(createDT)
         }
     }
 

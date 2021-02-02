@@ -149,9 +149,9 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
 
     private fun subscribe() {
         loginViewModel.registerResultWithRecVM.observe(viewLifecycleOwner, Observer { result ->
-            if (result.IsSuccessful) {
+            if (result.isSuccessful) {
                 setVisibilityProgress(false)
-                storeTokens(result.Rec?.TokenData?.AccessToken!!, result.Rec.TokenData.RefreshToken)
+                storeTokens(result.rec?.tokenData?.accessToken!!, result.rec.tokenData.refreshToken)
                 navigate()
             }
         })
@@ -159,27 +159,27 @@ class RegisterFragment : Fragment(R.layout.fragment_register) {
         loginViewModel.registerErrors.observe(viewLifecycleOwner, Observer { result ->
             val registerErrors = result ?: return@Observer
             setVisibilityProgress(false)
-            registerErrors.Errors?.forEach {
-                Log.d(TAG, "errors: ${it.Field}")
-                when (it.Field) {
+            registerErrors.errors?.forEach {
+                Log.d(TAG, "errors: ${it.field}")
+                when (it.field) {
                     "UserName" -> {
-                        val text = getDescription(it.ErrorCode, requireContext())
+                        val text = getDescription(it.errorCode, requireContext())
                         binding.evUserName.error = text
                     }
                     "Password" -> {
-                        val text = getDescription(it.ErrorCode, requireContext())
+                        val text = getDescription(it.errorCode, requireContext())
                         binding.evPassword.error = text
                     }
                     "ConfirmPassword" -> {
-                        val text = getDescription(it.ErrorCode, requireContext())
+                        val text = getDescription(it.errorCode, requireContext())
                         binding.evConfirmPassword.error = text
                     }
                     "DisplayName" -> {
-                        val text = getDescription(it.ErrorCode, requireContext())
+                        val text = getDescription(it.errorCode, requireContext())
                         binding.evDisplayName.error = text
                     }
                     "Email" -> {
-                        val text = getDescription(it.ErrorCode, requireContext())
+                        val text = getDescription(it.errorCode, requireContext())
                         binding.evEmail.error = text
                     }
                 }

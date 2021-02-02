@@ -12,10 +12,12 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
+import com.google.gson.reflect.TypeToken
 import com.kagan.chatapp.R
 import com.kagan.chatapp.adapters.MessageListAdapter
 import com.kagan.chatapp.databinding.FragmentChatRoomBinding
 import com.kagan.chatapp.db.entities.UsersEntity
+import com.kagan.chatapp.models.*
 import com.kagan.chatapp.models.chatrooms.MessageVM
 import com.kagan.chatapp.models.chatrooms.OnReceivedMessageVM
 import com.kagan.chatapp.utils.Constants.Companion.CHAT_HUB_URL
@@ -65,27 +67,55 @@ class ChatRoomFragment : Fragment(R.layout.fragment_chat_room) {
 
         hubConnection.on(
             "OnConnect",
-            { message ->
-                Log.d("SignalR", "OnConnect $message")
+            { onConnect: String ->
+                Log.d("SignalR", "OnConnect $onConnect")
+                try {
+                    val result = gson.fromJson(
+                        onConnect,
+                        OnConnectVM::class.java
+                    )
+
+                } catch (e: JsonSyntaxException) {
+                    Sentry.captureException(e)
+                }
             },
             String::class.java
         )
 
         hubConnection.on(
-            "OnDisconnect", { message ->
+            "OnDisconnect", { message: String ->
                 Log.d("SignalR", "OnDisconnect $message")
+                try {
+                    val result = gson.fromJson<OnDisconnectVM>(
+                        message,
+                        OnDisconnectVM::class.java
+                    )
 
+                } catch (e: JsonSyntaxException) {
+                    Sentry.captureException(e)
+                }
             }, String::class.java
         )
         hubConnection.on(
-            "OnJoinToGroup", { message ->
+            "OnJoinToGroup", { message: String ->
                 Log.d("SignalR", "OnJoinToGroup $message")
-                showJoinedUser(message)
+                var result: OnJoinToGroupVM? = null
+                try {
+                    result = gson.fromJson<OnJoinToGroupVM>(
+                        message,
+                        OnJoinToGroupVM::class.java
+                    )
+                } catch (e: JsonSyntaxException) {
+                    Sentry.captureException(e)
+                }
+                result?.let {
+                    showJoinedUser(it)
+                }
             }, String::class.java
         )
 
         hubConnection.on(
-            "ReceiveMessage", { message ->
+            "ReceiveMessage", { message: String ->
                 Log.d("SignalR", "ReceiveMessage $message")
                 var result: OnReceivedMessageVM? = null
                 try {
@@ -93,26 +123,43 @@ class ChatRoomFragment : Fragment(R.layout.fragment_chat_room) {
                         message,
                         OnReceivedMessageVM::class.java
                     )
+                    result?.let { addToMessageList(it) }
+                } catch (e: JsonSyntaxException) {
+                    Sentry.captureException(e)
+                }
+
+            }, String::class.java
+        )
+
+        hubConnection.on(
+            "ReceiveActiveUsers", { message: String ->
+                Log.d("SignalR", "ReceiveActiveUsers $message")
+                var result: ReceiveActiveUsersVM? = null
+                try {
+                    val activeUserType = object : TypeToken<ReceiveActiveUsersVM>() {}.type
+                    result = gson.fromJson(
+                        message,
+                        activeUserType
+                    )
 
                 } catch (e: JsonSyntaxException) {
                     Sentry.captureException(e)
                 }
-                result?.let { addToMessageList(it) }
-
             }, String::class.java
         )
 
         hubConnection.on(
-            "ReceiveActiveUsers", { message ->
-                Log.d("SignalR", "ReceiveActiveUsers $message")
-
-            }, String::class.java
-        )
-
-        hubConnection.on(
-            "ReceiveActiveUsersOfGroup", { message ->
+            "ReceiveActiveUsersOfGroup", { message: String ->
                 Log.d("SignalR", "ReceiveActiveUsersOfGroup $message")
-
+                var result: ReceiveActiveUsersOfGroupVM? = null
+                try {
+                    result = gson.fromJson<ReceiveActiveUsersOfGroupVM>(
+                        message,
+                        ReceiveActiveUsersOfGroupVM::class.java
+                    )
+                } catch (e: JsonSyntaxException) {
+                    Sentry.captureException(e)
+                }
             }, String::class.java
         )
 
@@ -123,22 +170,40 @@ class ChatRoomFragment : Fragment(R.layout.fragment_chat_room) {
             }, String::class.java
         )
 
+        hubConnection.on(
+            "OnLeaveFromGroup", { message: String ->
+                var result: OnLeaveFromGroupVM? = null
+                try {
+                    result = gson.fromJson<OnLeaveFromGroupVM>(
+                        message,
+                        OnLeaveFromGroupVM::class.java
+                    )
+                } catch (e: JsonSyntaxException) {
+                    Sentry.captureException(e)
+                }
+            }, String::class.java
+        )
+
         connectToSocket()
     }
 
     private fun addToMessageList(sender: OnReceivedMessageVM) {
         requireActivity().runOnUiThread {
-            val testMessageVm = MessageVM(
-                sender.Text,
-                safeArgs.chatRoomId.id,
-                Utils.getCurrentTime(),
-                null,
-                sender.SenderId,
-                null
-            )
+            try {
+                val testMessageVm = MessageVM(
+                    sender.text,
+                    safeArgs.chatRoomId.id,
+                    Utils.getCurrentTime(),
+                    null,
+                    sender.senderId,
+                    null
+                )
 
-            messageList.add(testMessageVm)
-            binding.chatRoom.recyclerViewMessage.scrollToPosition(messageList.size - 1)
+                messageList.add(testMessageVm)
+                binding.chatRoom.recyclerViewMessage.scrollToPosition(messageList.size - 1)
+            } catch (e: NullPointerException) {
+                Sentry.captureException(e)
+            }
         }
 
     }
@@ -153,7 +218,7 @@ class ChatRoomFragment : Fragment(R.layout.fragment_chat_room) {
             }
             if (hubConnection.connectionState == HubConnectionState.CONNECTED) {
                 Log.d("SignalR", "connectToSocket: ")
-                hubConnection.invoke("AddToGroup", safeArgs.chatRoomId.id.toString())
+                hubConnection.invoke("JoinToGroup", safeArgs.chatRoomId.id.toString())
                     .blockingAwait()
             }
         } catch (e: Exception) {
@@ -209,10 +274,10 @@ class ChatRoomFragment : Fragment(R.layout.fragment_chat_room) {
         }
     }
 
-    private fun showJoinedUser(id: String) {
+    private fun showJoinedUser(data: OnJoinToGroupVM) {
         requireActivity().runOnUiThread {
             val user = userList.find {
-                it.Id == id
+                it.Id == data.userId.toString()
             }
 
             if (user != null) {
@@ -244,7 +309,7 @@ class ChatRoomFragment : Fragment(R.layout.fragment_chat_room) {
                 is States.Success -> {
                     messageList.clear()
                     messageList.addAll(state.data.sortedBy {
-                        it.CreateDT
+                        it.createDT
                     })
                     binding.chatRoom.recyclerViewMessage.scrollToPosition(messageList.size - 1)
                     messageAdapter.notifyDataSetChanged()

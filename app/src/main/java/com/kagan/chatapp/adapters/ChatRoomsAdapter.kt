@@ -37,11 +37,11 @@ constructor(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.apply {
             cardViewLayout.setOnClickListener {
-                clickListener.onclick(itemList[position].Id)
+                clickListener.onclick(itemList[position].id)
             }
             ivUserPics.setImageResource(R.drawable.ic_baseline_android_24)
-            tvUserOrTitle.text = itemList[position].Name
-            tvDesc.text = itemList[position].Description
+            tvUserOrTitle.text = itemList[position].name
+            tvDesc.text = itemList[position].description
         }
     }
 

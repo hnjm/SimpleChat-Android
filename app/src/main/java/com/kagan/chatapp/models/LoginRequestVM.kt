@@ -1,8 +1,8 @@
 package com.kagan.chatapp.models
 
 data class LoginRequestVM(
-    val UserName: String,
-    val Password: String
+    val userName: String,
+    val password: String
 )
 
 class LoginUserRequestVM {
