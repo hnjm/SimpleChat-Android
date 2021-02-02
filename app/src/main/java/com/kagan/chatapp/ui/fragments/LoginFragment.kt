@@ -97,19 +97,19 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             val loginResult = it ?: return@Observer
             setVisibilityProgress(false)
 
-            tokenPreferenceViewModel.storeAccessToken(loginResult.TokenData.AccessToken)
-            tokenPreferenceViewModel.storeRefreshToken(loginResult.TokenData.RefreshToken)
+            tokenPreferenceViewModel.storeAccessToken(loginResult.tokenData.accessToken)
+            tokenPreferenceViewModel.storeRefreshToken(loginResult.tokenData.refreshToken)
             var about = ""
-            if (loginResult.About != null) {
-                about = loginResult.About
+            if (loginResult.about != null) {
+                about = loginResult.about
             }
             userPreferenceViewModel.storeUser(
-                username = loginResult.UserName,
-                displayName = loginResult.DisplayName,
+                username = loginResult.userName,
+                displayName = loginResult.displayName,
                 about = about,
-                accessToken = loginResult.TokenData.AccessToken,
-                refreshToken = loginResult.TokenData.RefreshToken,
-                id = loginResult.Id.toString()
+                accessToken = loginResult.tokenData.accessToken,
+                refreshToken = loginResult.tokenData.refreshToken,
+                id = loginResult.id.toString()
             )
 
             sharedViewModel.postValue(loginResult)
@@ -131,20 +131,20 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             val loginError = result ?: return@Observer
             Log.d(TAG, "loginErrors: $loginError")
             setVisibilityProgress(false)
-            loginError.Errors?.forEach {
-                when (it.Field) {
+            loginError.errors?.forEach {
+                when (it.field) {
                     "UserName" -> {
                         binding.layoutId.evUserName.error =
-                            ErrorCodes.getDescription(it.ErrorCode, requireContext())
+                            ErrorCodes.getDescription(it.errorCode, requireContext())
                     }
 
                     "Password" -> {
                         binding.layoutId.evPassword.error =
-                            ErrorCodes.getDescription(it.ErrorCode, requireContext())
+                            ErrorCodes.getDescription(it.errorCode, requireContext())
                     }
                     "General" -> {
                         binding.layoutId.evUserName.error =
-                            ErrorCodes.getDescription(it.ErrorCode, requireContext())
+                            ErrorCodes.getDescription(it.errorCode, requireContext())
                     }
                 }
             }

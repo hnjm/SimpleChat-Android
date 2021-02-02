@@ -1,10 +1,10 @@
 package com.kagan.chatapp.models.chatrooms
 
 data class AddVM(
-    val Description: String,
-    val IsMain: Boolean,
-    val IsOneToOneChat: Boolean,
-    val IsPrivate: Boolean,
-    val Name: String,
-    val Users: List<String>
+    val description: String,
+    val isMain: Boolean,
+    val isOneToOneChat: Boolean,
+    val isPrivate: Boolean,
+    val name: String,
+    val users: List<String>
 )

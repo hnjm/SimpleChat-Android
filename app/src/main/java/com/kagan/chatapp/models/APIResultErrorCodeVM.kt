@@ -1,6 +1,6 @@
 package com.kagan.chatapp.models
 
 data class APIResultErrorCodeVM(
-    val Field: String,
-    val ErrorCode: String
+    val field: String,
+    val errorCode: String
 )

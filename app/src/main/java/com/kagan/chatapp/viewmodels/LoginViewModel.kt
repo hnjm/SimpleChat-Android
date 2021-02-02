@@ -110,7 +110,7 @@ constructor(
                     400 -> {
                         loginResponseFailed(response)
                     }
-                    404 -> {
+                    401 -> {
                         loginResponseFailed(response)
                     }
                     409 -> {
@@ -118,6 +118,7 @@ constructor(
                     }
                     200 -> {
                         try {
+                            Log.d("200", "onResponse: $response")
                             val body = response.body()
                             val user = parseJsonToVM(body!!, UserAuthenticationVM::class.java)
 
@@ -166,7 +167,7 @@ constructor(
                         _logoutRefreshTokenClean.value = true
                         Log.d(TAG, "204: ")
                     }
-                    400 -> {
+                    401 -> {
                         logoutResponseFailed(response)
                         Log.d(TAG, "400: ")
                     }

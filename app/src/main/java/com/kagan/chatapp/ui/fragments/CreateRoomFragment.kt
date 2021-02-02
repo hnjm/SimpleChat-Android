@@ -69,11 +69,11 @@ class CreateRoomFragment : Fragment(R.layout.fragment_create_room) {
                 }
                 is States.Error -> {
                     displayProgressBar(false)
-                    postState.error.Errors?.forEach {
-                        when (it.Field) {
+                    postState.error.errors?.forEach {
+                        when (it.field) {
                             "Name" -> {
                                 binding.createRoom.evName.error =
-                                    getDescription(it.ErrorCode, requireContext())
+                                    getDescription(it.errorCode, requireContext())
                             }
                         }
                     }
@@ -95,12 +95,12 @@ class CreateRoomFragment : Fragment(R.layout.fragment_create_room) {
 
         // DI and IsMain, IsOneToOne
         return AddVM(
-            Description = description,
-            IsMain = false,
-            IsPrivate = isPrivate,
-            Users = users,
-            IsOneToOneChat = false,
-            Name = name
+            description = description,
+            isMain = false,
+            isPrivate = isPrivate,
+            users = users,
+            isOneToOneChat = false,
+            name = name
         )
 
     }

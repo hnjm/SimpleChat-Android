@@ -2,6 +2,6 @@ package com.kagan.chatapp.models
 
 import java.util.*
 
-abstract class BaseVM {
-    abstract val id: UUID?
-}
+data class OnDisconnectVM(
+    val userId: UUID
+)

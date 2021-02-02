@@ -14,6 +14,7 @@ import com.kagan.chatapp.db.mappers.NetworkMapper
 import com.kagan.chatapp.models.*
 import com.kagan.chatapp.repositories.UserDBRepository
 import com.kagan.chatapp.repositories.UserRepository
+import com.kagan.chatapp.utils.APIStatusCode
 import com.kagan.chatapp.utils.ParseJsonToVM
 import com.kagan.chatapp.utils.States
 import com.kagan.chatapp.utils.UserEvent
@@ -87,12 +88,17 @@ constructor(
                             )
                         )
                     }
-                    404 -> {
+                    204 -> {
                         _usersStateError.value = States.Error(
-                            parseJsonToVM.parseJsonToVM(
-                                response.errorBody()?.string()!!,
-                                APIResultVM::class.java,
-                                gson
+                            APIResultVM(
+                                null,
+                                false,
+                                arrayListOf(
+                                    APIResultErrorCodeVM(
+                                        "General",
+                                        APIStatusCode.ERR01002
+                                    )
+                                )
                             )
                         )
                     }
@@ -110,7 +116,7 @@ constructor(
 
     fun getUser(currentUser: UserAuthenticationVM) {
         Log.d(TAG, "getUser: running")
-        val call = userRepository.getUser(currentUser.Id, currentUser.TokenData.AccessToken)
+        val call = userRepository.getUser(currentUser.id, currentUser.tokenData.accessToken)
 
         call.enqueue(object : Callback<JsonElement> {
             override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {

@@ -53,7 +53,7 @@ constructor(
     override fun getItemViewType(position: Int): Int {
         val message = messageList[position]
 
-        return if (message.CreateBy.toString() == currentId) {
+        return if (message.createBy.toString() == currentId) {
             VIEW_TYPE_MESSAGE_SENT
         } else {
             VIEW_TYPE_MESSAGE_RECEIVED

@@ -3,10 +3,10 @@ package com.kagan.chatapp.models
 import java.util.*
 
 data class UserAuthenticationVM(
-    override val Id: UUID,
-    val UserName: String,
-    val DisplayName: String,
-    val About: String,
-    val TokenData: TokenCacheVM
+    override val id: UUID,
+    val userName: String,
+    val displayName: String,
+    val about: String,
+    val tokenData: TokenCacheVM
 ) : BaseVM()
 

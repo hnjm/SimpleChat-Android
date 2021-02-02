@@ -56,7 +56,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         })
 
         userViewModel.user.observe(viewLifecycleOwner, {
-            binding.tvUserName.text = it.Rec?.DisplayName
+            binding.tvUserName.text = it.rec?.displayName
         })
 
         tokenPreferenceViewModel.accessToken.observe(viewLifecycleOwner, Observer {

@@ -9,6 +9,7 @@ import com.google.gson.Gson
 import com.google.gson.JsonElement
 import com.google.gson.JsonSyntaxException
 import com.google.gson.reflect.TypeToken
+import com.kagan.chatapp.models.APIResultErrorCodeVM
 import com.kagan.chatapp.models.APIResultVM
 import com.kagan.chatapp.models.APIResultWithRecVM
 import com.kagan.chatapp.models.chatrooms.AddVM
@@ -16,6 +17,7 @@ import com.kagan.chatapp.models.chatrooms.ChatRoomUpdateVM
 import com.kagan.chatapp.models.chatrooms.ChatRoomVM
 import com.kagan.chatapp.models.chatrooms.MessageVM
 import com.kagan.chatapp.repositories.ChatRoomRepository
+import com.kagan.chatapp.utils.APIStatusCode
 import com.kagan.chatapp.utils.States
 import io.sentry.Sentry
 import io.sentry.SentryLevel
@@ -81,11 +83,17 @@ constructor(
                             )
                         )
                     }
-                    404 -> {
+                    204 -> {
                         _state.value = States.Error(
-                            parseJsonToVM(
-                                response.errorBody()?.string()!!,
-                                APIResultVM::class.java
+                            APIResultVM(
+                                null,
+                                false,
+                                arrayListOf(
+                                    APIResultErrorCodeVM(
+                                        "General",
+                                        APIStatusCode.ERR01002
+                                    )
+                                )
                             )
                         )
                     }
@@ -218,11 +226,17 @@ constructor(
                             )
                         )
                     }
-                    404 -> {
-                        _chatRoomUsers.value = States.Error(
-                            parseJsonToVM(
-                                response.errorBody()?.string()!!,
-                                APIResultVM::class.java
+                    204 -> {
+                        _state.value = States.Error(
+                            APIResultVM(
+                                null,
+                                false,
+                                arrayListOf(
+                                    APIResultErrorCodeVM(
+                                        "General",
+                                        APIStatusCode.ERR01002
+                                    )
+                                )
                             )
                         )
                     }
@@ -340,8 +354,19 @@ constructor(
                     400 -> {
 
                     }
-                    404 -> {
-
+                    204 -> {
+                        _state.value = States.Error(
+                            APIResultVM(
+                                null,
+                                false,
+                                arrayListOf(
+                                    APIResultErrorCodeVM(
+                                        "General",
+                                        APIStatusCode.ERR01002
+                                    )
+                                )
+                            )
+                        )
                     }
                     500 -> {
                         TODO("Something happened")
